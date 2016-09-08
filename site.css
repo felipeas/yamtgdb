@@ -1,0 +1,8 @@
+#lists {
+    display:flex;
+} 
+
+.list {
+    width: 500px;
+    padding: 10px;
+}
