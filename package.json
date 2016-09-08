@@ -1,7 +1,7 @@
 {
   "name": "yamtgdb",
   "version": "1.0.0",
-  "description": "tool for search mtg cards",
+  "description": "react tool to search mtg cards",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --progress --colors",
