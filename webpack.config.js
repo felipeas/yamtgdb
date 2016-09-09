@@ -1,12 +1,17 @@
 var webpack = require('webpack');  
+var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+var srcPath = path.join(__dirname, 'src');
+var distPath = path.join(__dirname, 'dist');
 
 module.exports = {  
-    entry: [
-      "./app.js"
-    ],
+    entry: {
+        app: [path.join(srcPath, 'index.js')],
+    },
     output: {
-        path: __dirname + '/build',
-        filename: "bundle.js"
+        path: distPath,
+        filename: 'bundle.js'
     },
     module: {
         loaders: [
@@ -15,6 +20,12 @@ module.exports = {
         ]
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin()
+        new HtmlWebpackPlugin({
+            template: path.join(srcPath, 'index.html'),
+            favicon: path.join(srcPath, 'favicon.ico'),
+        }),
+        new CopyWebpackPlugin([
+            { from: path.join(srcPath, 'site.css') }
+        ]),
     ]
 };
