@@ -1,7 +1,23 @@
-#lists {
-    display:flex;
-} 
-
 .list {
-    width: 500px;
+    width: 100%;
+}
+
+.card-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.card-title {
+    flex: 1 100%;
+    order: 1;
+}
+
+.card-text {
+    flex: 2;
+    order: 2;
+}
+
+.card-image {
+    flex: 1;
+    order: 3;
 }

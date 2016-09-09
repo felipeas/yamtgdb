@@ -18,8 +18,7 @@ export default class CardList extends Component {
         const cards = data.map((card, index) => {
             return (
                 <Card 
-                    name={card.name} 
-                    text={card.text} 
+                    data={card}
                     key={index}
                 />);
             });

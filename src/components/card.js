@@ -6,13 +6,21 @@ export default class Card extends Component {
     }
 
     render () {
-        const card = this.props;
+        const { data }= this.props;
         //TODO:
         //parse svg icons
+        //images
         return (
-            <div>
-                <h3>{card.name}</h3>
-                <span>{card.text}</span>
+            <div className="card-wrapper">
+                <div className="card-title">
+                    <h3>{data.name}</h3>
+                </div>
+                <div className="card-text">
+                    <span>{data.text}</span>
+                </div>
+                <div className="card-image">
+                    <img src={data.editions[0].image_url}/>
+                </div>
             </div>
         )
     }
