@@ -23215,8 +23215,7 @@
 
 	            var cards = data.map(function (card, index) {
 	                return _react2.default.createElement(_card2.default, {
-	                    name: card.name,
-	                    text: card.text,
+	                    data: card,
 	                    key: index
 	                });
 	            });
@@ -23243,7 +23242,7 @@
 /* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -23273,23 +23272,38 @@
 	    }
 
 	    _createClass(Card, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
-	            var card = this.props;
+	            var data = this.props.data;
 	            //TODO:
 	            //parse svg icons
+	            //images
+
 	            return _react2.default.createElement(
-	                'div',
-	                null,
+	                "div",
+	                { className: "card-wrapper" },
 	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    card.name
+	                    "div",
+	                    { className: "card-title" },
+	                    _react2.default.createElement(
+	                        "h3",
+	                        null,
+	                        data.name
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    card.text
+	                    "div",
+	                    { className: "card-text" },
+	                    _react2.default.createElement(
+	                        "span",
+	                        null,
+	                        data.text
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "card-image" },
+	                    _react2.default.createElement("img", { src: data.editions[0].image_url })
 	                )
 	            );
 	        }
