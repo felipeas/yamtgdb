@@ -33,7 +33,7 @@ export default class CardBox extends Component {
     render () {
         return (
             <div id='cardbox'>
-                <h1>card box</h1>
+                <h1>yamtgdb</h1>
                 <CardSearch 
                     onChange={this.handleOnSearchChange.bind(this)}
                     onSubmit={this.handleOnSearchSubmit.bind(this)}

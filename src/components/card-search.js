@@ -19,7 +19,7 @@ export default class CardSearch extends Component {
         const { props } = this;
         return (
             <form className="search" onSubmit={this.handleSubmit.bind(this)}>
-                <h2>card search</h2>
+                <h2>search</h2>
                 <input
                     id="search"
                     type="text"

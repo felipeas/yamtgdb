@@ -26,7 +26,7 @@ export default class CardList extends Component {
 
         return (
             <div className="list">
-                <h2>card list</h2>
+                <h2>list</h2>
                 {cards} 
             </div>
         );
