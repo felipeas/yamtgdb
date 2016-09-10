@@ -65,9 +65,9 @@
 
 	var _cardBox2 = _interopRequireDefault(_cardBox);
 
-	var _reactRedux = __webpack_require__(174);
+	var _reactRedux = __webpack_require__(177);
 
-	var _stores = __webpack_require__(202);
+	var _stores = __webpack_require__(200);
 
 	var _stores2 = _interopRequireDefault(_stores);
 
@@ -21468,19 +21468,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(174);
-
-	var _cardList = __webpack_require__(198);
+	var _cardList = __webpack_require__(174);
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _cardSearch = __webpack_require__(200);
+	var _cardSearch = __webpack_require__(176);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
-
-	var _app = __webpack_require__(201);
-
-	var _redux = __webpack_require__(181);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21508,26 +21502,25 @@
 	            // console.log(search);
 	        }
 	    }, {
-	        key: 'updateSearch',
-	        value: function updateSearch(data) {
-	            //TODO: save searchs in localStorage
-	            //TODO: paginated searchs, api return lists by 100, 
-	            // if array lenght is > 100 then lookup for page 2, 3 and goes on
-	            this.setState({ 'search': data });
+	        key: 'handleOnSearchResultClick',
+	        value: function handleOnSearchResultClick(card) {
+	            var cards = this.state.cards;
+	            //TODO: instead of adding card put a counter on duplicates
+	            cards.push(card);
+	            this.setState({ 'cards': cards });
+	        }
+	    }, {
+	        key: 'handleOnListClick',
+	        value: function handleOnListClick(card) {
+	            var cards = this.state.cards.filter(function (x) {
+	                x.id != card.id;
+	            });
+	            this.setState({ 'cards': cards });
 	        }
 	    }, {
 	        key: 'handleOnSearchSubmit',
 	        value: function handleOnSearchSubmit(search) {
-	            var _this2 = this;
-
-	            var url = 'https://api.deckbrew.com/mtg/cards?name=' + search.text;
-	            fetch(url).then(function (response) {
-	                return response.json();
-	            }).then(function (data) {
-	                return _this2.updateSearch(data);
-	            }).catch(function (err) {
-	                return console.error(url, err.toString());
-	            });
+	            this.setState({ 'search': search });
 	        }
 	    }, {
 	        key: 'render',
@@ -21546,9 +21539,14 @@
 	                }),
 	                _react2.default.createElement(
 	                    'section',
-	                    { id: 'lists' },
-	                    _react2.default.createElement(_cardList2.default, {
-	                        data: this.state.search
+	                    { className: 'lists' },
+	                    _react2.default.createElement(_cardList2.default, { id: 'search-list',
+	                        data: this.state.search,
+	                        onCardClick: this.handleOnSearchResultClick.bind(this)
+	                    }),
+	                    _react2.default.createElement(_cardList2.default, { id: 'card-list',
+	                        data: this.state.cards,
+	                        onCardClick: this.handleOnListClick.bind(this)
 	                    })
 	                )
 	            );
@@ -21566,14 +21564,286 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _card = __webpack_require__(175);
+
+	var _card2 = _interopRequireDefault(_card);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardList = function (_Component) {
+	    _inherits(CardList, _Component);
+
+	    function CardList(props) {
+	        _classCallCheck(this, CardList);
+
+	        var _this = _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
+
+	        _this.state = { showImages: false };
+	        return _this;
+	    }
+
+	    _createClass(CardList, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
+	            console.log(nextProps);
+	        }
+	    }, {
+	        key: 'handleCheckboxChange',
+	        value: function handleCheckboxChange(e) {
+	            this.setState({ showImages: e.target.checked });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var data = this.props.data;
+	            var showImages = this.state.showImages;
+
+
+	            var cards = data.map(function (card, index) {
+	                return _react2.default.createElement(_card2.default, {
+	                    data: card,
+	                    key: index,
+	                    onClick: _this2.props.onCardClick,
+	                    showImage: showImages
+	                });
+	            });
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'list' },
+	                _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    'list'
+	                ),
+	                _react2.default.createElement('input', {
+	                    type: 'checkbox',
+	                    onChange: this.handleCheckboxChange.bind(this),
+	                    checked: this.state.showImages
+	                }),
+	                cards
+	            );
+	        }
+	    }]);
+
+	    return CardList;
+	}(_react.Component);
+
+	exports.default = CardList;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Card = function (_Component) {
+	    _inherits(Card, _Component);
+
+	    function Card(props) {
+	        _classCallCheck(this, Card);
+
+	        return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+	    }
+
+	    _createClass(Card, [{
+	        key: "handleClick",
+	        value: function handleClick() {
+	            var card = this.props.data;
+	            this.props.onClick(card);
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var data = this.props.data;
+
+	            var showImage = this.props.showImage;
+
+	            //TODO:
+	            //svgeezus all the symbols in parsing
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "card-wrapper", onClick: this.handleClick.bind(this) },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "card-title" },
+	                    _react2.default.createElement(
+	                        "h3",
+	                        null,
+	                        data.name
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "card-text" },
+	                    _react2.default.createElement(
+	                        "span",
+	                        null,
+	                        data.text ? data.text : '[none]'
+	                    )
+	                ),
+	                showImage ? this.renderImage(data) : ''
+	            );
+	        }
+	    }, {
+	        key: "renderImage",
+	        value: function renderImage(data) {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "card-image" },
+	                _react2.default.createElement("img", { src: data.editions[0].image_url })
+	            );
+	        }
+	    }]);
+
+	    return Card;
+	}(_react.Component);
+
+	exports.default = Card;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CardSearch = function (_Component) {
+	    _inherits(CardSearch, _Component);
+
+	    function CardSearch(props) {
+	        _classCallCheck(this, CardSearch);
+
+	        return _possibleConstructorReturn(this, (CardSearch.__proto__ || Object.getPrototypeOf(CardSearch)).call(this, props));
+	    }
+
+	    _createClass(CardSearch, [{
+	        key: "handleSubmit",
+	        value: function handleSubmit(e) {
+	            var _this2 = this;
+
+	            e.preventDefault();
+	            var searchTerm = e.target.search.value;
+
+	            var url = "https://api.deckbrew.com/mtg/cards?name=" + searchTerm;
+	            fetch(url).then(function (response) {
+	                return response.json();
+	            }).then(function (data) {
+	                return _this2.props.onSubmit(data);
+	            }).catch(function (err) {
+	                return console.error(url, err.toString());
+	            });
+	        }
+	    }, {
+	        key: "handleChange",
+	        value: function handleChange(e) {
+	            e.preventDefault();
+	            this.props.onChange({ text: e.target.value });
+	        }
+	    }, {
+	        key: "updateSearch",
+	        value: function updateSearch(data) {
+	            //TODO: save searchs in localStorage
+	            //TODO: paginated searchs, api return lists by 100, 
+	            // if array lenght is > 100 then lookup for page 2, 3 and goes on
+
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var props = this.props;
+
+	            return _react2.default.createElement(
+	                "form",
+	                { className: "search", onSubmit: this.handleSubmit.bind(this) },
+	                _react2.default.createElement(
+	                    "h2",
+	                    null,
+	                    "search"
+	                ),
+	                _react2.default.createElement("input", {
+	                    id: "search",
+	                    type: "text",
+	                    placeholder: "search",
+	                    onChange: this.handleChange.bind(this)
+	                })
+	            );
+	        }
+	    }]);
+
+	    return CardSearch;
+	}(_react.Component);
+
+	exports.default = CardSearch;
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(175);
+	var _Provider = __webpack_require__(178);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(178);
+	var _connect = __webpack_require__(181);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -21583,7 +21853,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 175 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21593,11 +21863,11 @@
 
 	var _react = __webpack_require__(2);
 
-	var _storeShape = __webpack_require__(176);
+	var _storeShape = __webpack_require__(179);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _warning = __webpack_require__(177);
+	var _warning = __webpack_require__(180);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -21667,7 +21937,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 176 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21683,7 +21953,7 @@
 	});
 
 /***/ },
-/* 177 */
+/* 180 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21712,7 +21982,7 @@
 	}
 
 /***/ },
-/* 178 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21724,31 +21994,31 @@
 
 	var _react = __webpack_require__(2);
 
-	var _storeShape = __webpack_require__(176);
+	var _storeShape = __webpack_require__(179);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(179);
+	var _shallowEqual = __webpack_require__(182);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(180);
+	var _wrapActionCreators = __webpack_require__(183);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _warning = __webpack_require__(177);
+	var _warning = __webpack_require__(180);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _isPlainObject = __webpack_require__(183);
+	var _isPlainObject = __webpack_require__(186);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(196);
+	var _hoistNonReactStatics = __webpack_require__(198);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(197);
+	var _invariant = __webpack_require__(199);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -22111,7 +22381,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 179 */
+/* 182 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22142,7 +22412,7 @@
 	}
 
 /***/ },
-/* 180 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22150,7 +22420,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(181);
+	var _redux = __webpack_require__(184);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -22159,7 +22429,7 @@
 	}
 
 /***/ },
-/* 181 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22167,31 +22437,31 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(182);
+	var _createStore = __webpack_require__(185);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(191);
+	var _combineReducers = __webpack_require__(193);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(193);
+	var _bindActionCreators = __webpack_require__(195);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(194);
+	var _applyMiddleware = __webpack_require__(196);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(195);
+	var _compose = __webpack_require__(197);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(192);
+	var _warning = __webpack_require__(194);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 	/*
 	* This is a dummy function to check if the function name has been altered by minification.
@@ -22200,35 +22470,35 @@
 	function isCrushed() {}
 
 	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-	  (0, _warning2['default'])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
 	}
 
-	exports.createStore = _createStore2['default'];
-	exports.combineReducers = _combineReducers2['default'];
-	exports.bindActionCreators = _bindActionCreators2['default'];
-	exports.applyMiddleware = _applyMiddleware2['default'];
-	exports.compose = _compose2['default'];
+	exports.createStore = _createStore2["default"];
+	exports.combineReducers = _combineReducers2["default"];
+	exports.bindActionCreators = _bindActionCreators2["default"];
+	exports.applyMiddleware = _applyMiddleware2["default"];
+	exports.compose = _compose2["default"];
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 182 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 	exports.ActionTypes = undefined;
-	exports['default'] = createStore;
+	exports["default"] = createStore;
 
-	var _isPlainObject = __webpack_require__(183);
+	var _isPlainObject = __webpack_require__(186);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _symbolObservable = __webpack_require__(188);
+	var _symbolObservable = __webpack_require__(191);
 
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 	/**
 	 * These are private action types reserved by Redux.
@@ -22251,7 +22521,7 @@
 	 * @param {Function} reducer A function that returns the next state tree, given
 	 * the current state tree and the action to handle.
 	 *
-	 * @param {any} [preloadedState] The initial state. You may optionally specify it
+	 * @param {any} [initialState] The initial state. You may optionally specify it
 	 * to hydrate the state from the server in universal apps, or to restore a
 	 * previously serialized user session.
 	 * If you use `combineReducers` to produce the root reducer function, this must be
@@ -22265,12 +22535,12 @@
 	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
 	 * and subscribe to changes.
 	 */
-	function createStore(reducer, preloadedState, enhancer) {
+	function createStore(reducer, initialState, enhancer) {
 	  var _ref2;
 
-	  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
-	    enhancer = preloadedState;
-	    preloadedState = undefined;
+	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+	    enhancer = initialState;
+	    initialState = undefined;
 	  }
 
 	  if (typeof enhancer !== 'undefined') {
@@ -22278,7 +22548,7 @@
 	      throw new Error('Expected the enhancer to be a function.');
 	    }
 
-	    return enhancer(createStore)(reducer, preloadedState);
+	    return enhancer(createStore)(reducer, initialState);
 	  }
 
 	  if (typeof reducer !== 'function') {
@@ -22286,7 +22556,7 @@
 	  }
 
 	  var currentReducer = reducer;
-	  var currentState = preloadedState;
+	  var currentState = initialState;
 	  var currentListeners = [];
 	  var nextListeners = currentListeners;
 	  var isDispatching = false;
@@ -22378,7 +22648,7 @@
 	   * return something else (for example, a Promise you can await).
 	   */
 	  function dispatch(action) {
-	    if (!(0, _isPlainObject2['default'])(action)) {
+	    if (!(0, _isPlainObject2["default"])(action)) {
 	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
 	    }
 
@@ -22443,6 +22713,7 @@
 	       * be used to unsubscribe the observable from the store, and prevent further
 	       * emission of values from the observable.
 	       */
+
 	      subscribe: function subscribe(observer) {
 	        if (typeof observer !== 'object') {
 	          throw new TypeError('Expected the observer to be an object.');
@@ -22458,7 +22729,7 @@
 	        var unsubscribe = outerSubscribe(observeState);
 	        return { unsubscribe: unsubscribe };
 	      }
-	    }, _ref[_symbolObservable2['default']] = function () {
+	    }, _ref[_symbolObservable2["default"]] = function () {
 	      return this;
 	    }, _ref;
 	  }
@@ -22473,16 +22744,16 @@
 	    subscribe: subscribe,
 	    getState: getState,
 	    replaceReducer: replaceReducer
-	  }, _ref2[_symbolObservable2['default']] = observable, _ref2;
+	  }, _ref2[_symbolObservable2["default"]] = observable, _ref2;
 	}
 
 /***/ },
-/* 183 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(184),
-	    isHostObject = __webpack_require__(186),
-	    isObjectLike = __webpack_require__(187);
+	var getPrototype = __webpack_require__(187),
+	    isHostObject = __webpack_require__(189),
+	    isObjectLike = __webpack_require__(190);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -22553,10 +22824,10 @@
 
 
 /***/ },
-/* 184 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(185);
+	var overArg = __webpack_require__(188);
 
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -22565,7 +22836,7 @@
 
 
 /***/ },
-/* 185 */
+/* 188 */
 /***/ function(module, exports) {
 
 	/**
@@ -22586,7 +22857,7 @@
 
 
 /***/ },
-/* 186 */
+/* 189 */
 /***/ function(module, exports) {
 
 	/**
@@ -22612,7 +22883,7 @@
 
 
 /***/ },
-/* 187 */
+/* 190 */
 /***/ function(module, exports) {
 
 	/**
@@ -22647,60 +22918,32 @@
 
 
 /***/ },
-/* 188 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(189);
+	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
+	'use strict';
 
+	module.exports = __webpack_require__(192)(global || window || this);
 
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _ponyfill = __webpack_require__(190);
-
-	var _ponyfill2 = _interopRequireDefault(_ponyfill);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var root = undefined; /* global window */
-
-	if (typeof global !== 'undefined') {
-		root = global;
-	} else if (typeof window !== 'undefined') {
-		root = window;
-	}
-
-	var result = (0, _ponyfill2['default'])(root);
-	exports['default'] = result;
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports) {
 
 	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports['default'] = symbolObservablePonyfill;
-	function symbolObservablePonyfill(root) {
+	module.exports = function symbolObservablePonyfill(root) {
 		var result;
-		var _Symbol = root.Symbol;
+		var Symbol = root.Symbol;
 
-		if (typeof _Symbol === 'function') {
-			if (_Symbol.observable) {
-				result = _Symbol.observable;
+		if (typeof Symbol === 'function') {
+			if (Symbol.observable) {
+				result = Symbol.observable;
 			} else {
-				result = _Symbol('observable');
-				_Symbol.observable = result;
+				result = Symbol('observable');
+				Symbol.observable = result;
 			}
 		} else {
 			result = '@@observable';
@@ -22709,26 +22952,27 @@
 		return result;
 	};
 
+
 /***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
 	exports.__esModule = true;
-	exports['default'] = combineReducers;
+	exports["default"] = combineReducers;
 
-	var _createStore = __webpack_require__(182);
+	var _createStore = __webpack_require__(185);
 
-	var _isPlainObject = __webpack_require__(183);
+	var _isPlainObject = __webpack_require__(186);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(192);
+	var _warning = __webpack_require__(194);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 	function getUndefinedStateErrorMessage(key, action) {
 	  var actionType = action && action.type;
@@ -22737,24 +22981,20 @@
 	  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
 	}
 
-	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
+	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
 	  var reducerKeys = Object.keys(reducers);
-	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
 
 	  if (reducerKeys.length === 0) {
 	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
 	  }
 
-	  if (!(0, _isPlainObject2['default'])(inputState)) {
+	  if (!(0, _isPlainObject2["default"])(inputState)) {
 	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
 	  }
 
 	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
-	    return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
-	  });
-
-	  unexpectedKeys.forEach(function (key) {
-	    unexpectedKeyCache[key] = true;
+	    return !reducers.hasOwnProperty(key);
 	  });
 
 	  if (unexpectedKeys.length > 0) {
@@ -22799,22 +23039,11 @@
 	  var finalReducers = {};
 	  for (var i = 0; i < reducerKeys.length; i++) {
 	    var key = reducerKeys[i];
-
-	    if (process.env.NODE_ENV !== 'production') {
-	      if (typeof reducers[key] === 'undefined') {
-	        (0, _warning2['default'])('No reducer provided for key "' + key + '"');
-	      }
-	    }
-
 	    if (typeof reducers[key] === 'function') {
 	      finalReducers[key] = reducers[key];
 	    }
 	  }
 	  var finalReducerKeys = Object.keys(finalReducers);
-
-	  if (process.env.NODE_ENV !== 'production') {
-	    var unexpectedKeyCache = {};
-	  }
 
 	  var sanityError;
 	  try {
@@ -22832,9 +23061,9 @@
 	    }
 
 	    if (process.env.NODE_ENV !== 'production') {
-	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
+	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
 	      if (warningMessage) {
-	        (0, _warning2['default'])(warningMessage);
+	        (0, _warning2["default"])(warningMessage);
 	      }
 	    }
 
@@ -22858,13 +23087,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 192 */
+/* 194 */
 /***/ function(module, exports) {
 
 	'use strict';
 
 	exports.__esModule = true;
-	exports['default'] = warning;
+	exports["default"] = warning;
 	/**
 	 * Prints a warning in the console if it exists.
 	 *
@@ -22888,13 +23117,13 @@
 	}
 
 /***/ },
-/* 193 */
+/* 195 */
 /***/ function(module, exports) {
 
 	'use strict';
 
 	exports.__esModule = true;
-	exports['default'] = bindActionCreators;
+	exports["default"] = bindActionCreators;
 	function bindActionCreator(actionCreator, dispatch) {
 	  return function () {
 	    return dispatch(actionCreator.apply(undefined, arguments));
@@ -22944,7 +23173,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22953,13 +23182,13 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	exports['default'] = applyMiddleware;
+	exports["default"] = applyMiddleware;
 
-	var _compose = __webpack_require__(195);
+	var _compose = __webpack_require__(197);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 	/**
 	 * Creates a store enhancer that applies middleware to the dispatch method
@@ -22983,8 +23212,8 @@
 	  }
 
 	  return function (createStore) {
-	    return function (reducer, preloadedState, enhancer) {
-	      var store = createStore(reducer, preloadedState, enhancer);
+	    return function (reducer, initialState, enhancer) {
+	      var store = createStore(reducer, initialState, enhancer);
 	      var _dispatch = store.dispatch;
 	      var chain = [];
 
@@ -22997,7 +23226,7 @@
 	      chain = middlewares.map(function (middleware) {
 	        return middleware(middlewareAPI);
 	      });
-	      _dispatch = _compose2['default'].apply(undefined, chain)(store.dispatch);
+	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
 
 	      return _extends({}, store, {
 	        dispatch: _dispatch
@@ -23007,7 +23236,7 @@
 	}
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23034,23 +23263,25 @@
 	    return function (arg) {
 	      return arg;
 	    };
-	  }
+	  } else {
+	    var _ret = function () {
+	      var last = funcs[funcs.length - 1];
+	      var rest = funcs.slice(0, -1);
+	      return {
+	        v: function v() {
+	          return rest.reduceRight(function (composed, f) {
+	            return f(composed);
+	          }, last.apply(undefined, arguments));
+	        }
+	      };
+	    }();
 
-	  if (funcs.length === 1) {
-	    return funcs[0];
+	    if (typeof _ret === "object") return _ret.v;
 	  }
-
-	  var last = funcs[funcs.length - 1];
-	  var rest = funcs.slice(0, -1);
-	  return function () {
-	    return rest.reduceRight(function (composed, f) {
-	      return f(composed);
-	    }, last.apply(undefined, arguments));
-	  };
 	}
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports) {
 
 	/**
@@ -23106,7 +23337,7 @@
 
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -23164,262 +23395,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _card = __webpack_require__(199);
-
-	var _card2 = _interopRequireDefault(_card);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var CardList = function (_Component) {
-	    _inherits(CardList, _Component);
-
-	    function CardList(props) {
-	        _classCallCheck(this, CardList);
-
-	        return _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
-	    }
-
-	    _createClass(CardList, [{
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
-	            console.log(nextProps);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            //TODO: User remarakble
-	            var data = this.props.data;
-
-
-	            var cards = data.map(function (card, index) {
-	                return _react2.default.createElement(_card2.default, {
-	                    data: card,
-	                    key: index
-	                });
-	            });
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'list' },
-	                _react2.default.createElement(
-	                    'h2',
-	                    null,
-	                    'list'
-	                ),
-	                cards
-	            );
-	        }
-	    }]);
-
-	    return CardList;
-	}(_react.Component);
-
-	exports.default = CardList;
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Card = function (_Component) {
-	    _inherits(Card, _Component);
-
-	    function Card(props) {
-	        _classCallCheck(this, Card);
-
-	        return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
-	    }
-
-	    _createClass(Card, [{
-	        key: "render",
-	        value: function render() {
-	            var data = this.props.data;
-	            //TODO:
-	            //parse svg icons
-	            //images
-
-	            return _react2.default.createElement(
-	                "div",
-	                { className: "card-wrapper" },
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-title" },
-	                    _react2.default.createElement(
-	                        "h3",
-	                        null,
-	                        data.name
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-text" },
-	                    _react2.default.createElement(
-	                        "span",
-	                        null,
-	                        data.text
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-image" },
-	                    _react2.default.createElement("img", { src: data.editions[0].image_url })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Card;
-	}(_react.Component);
-
-	exports.default = Card;
-
-/***/ },
 /* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var CardSearch = function (_Component) {
-	    _inherits(CardSearch, _Component);
-
-	    function CardSearch(props) {
-	        _classCallCheck(this, CardSearch);
-
-	        return _possibleConstructorReturn(this, (CardSearch.__proto__ || Object.getPrototypeOf(CardSearch)).call(this, props));
-	    }
-
-	    _createClass(CardSearch, [{
-	        key: "handleSubmit",
-	        value: function handleSubmit(e) {
-	            e.preventDefault();
-	            this.props.onSubmit({ text: e.target.search.value });
-	        }
-	    }, {
-	        key: "handleChange",
-	        value: function handleChange(e) {
-	            e.preventDefault();
-	            this.props.onChange({ text: e.target.value });
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            var props = this.props;
-
-	            return _react2.default.createElement(
-	                "form",
-	                { className: "search", onSubmit: this.handleSubmit.bind(this) },
-	                _react2.default.createElement(
-	                    "h2",
-	                    null,
-	                    "search"
-	                ),
-	                _react2.default.createElement("input", {
-	                    id: "search",
-	                    type: "text",
-	                    placeholder: "search",
-	                    onChange: this.handleChange.bind(this)
-	                })
-	            );
-	        }
-	    }]);
-
-	    return CardSearch;
-	}(_react.Component);
-
-	exports.default = CardSearch;
-
-/***/ },
-/* 201 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.searchCards = searchCards;
-	exports.addCard = addCard;
-	var APP_SEARCH = exports.APP_SEARCH = 'APP_SEARCH';
-	var APP_ADD_CARD = exports.APP_ADD_CARD = 'APP_ADD_CARD';
-	// export const APP_SEARCH_CLEAR = 'APP_SEARCH_CLEAR';
-	// export const APP_CARD_LIST_CLEAR = 'APP_CARD_LIST_CLEAR';
-
-	function searchCards(results) {
-	    // debugger;
-	    return {
-	        type: APP_SEARCH,
-	        results: results
-	    };
-	}
-
-	function addCard(card) {
-	    return {
-	        type: APP_ADD_CARD,
-	        card: card
-	    };
-	}
-
-/***/ },
-/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -23429,17 +23405,17 @@
 	});
 	exports.default = configureStore;
 
-	var _redux = __webpack_require__(181);
+	var _redux = __webpack_require__(184);
 
-	var _reduxThunk = __webpack_require__(203);
+	var _reduxThunk = __webpack_require__(201);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reduxLogger = __webpack_require__(204);
+	var _reduxLogger = __webpack_require__(202);
 
 	var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
 
-	var _reducers = __webpack_require__(205);
+	var _reducers = __webpack_require__(203);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
@@ -23463,7 +23439,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 203 */
+/* 201 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23491,7 +23467,7 @@
 	exports['default'] = thunk;
 
 /***/ },
-/* 204 */
+/* 202 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23724,7 +23700,7 @@
 	module.exports = createLogger;
 
 /***/ },
-/* 205 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23733,9 +23709,9 @@
 	    value: true
 	});
 
-	var _redux = __webpack_require__(181);
+	var _redux = __webpack_require__(184);
 
-	var _cards = __webpack_require__(206);
+	var _cards = __webpack_require__(204);
 
 	var _cards2 = _interopRequireDefault(_cards);
 
@@ -23748,7 +23724,7 @@
 	exports.default = rootReducer;
 
 /***/ },
-/* 206 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23773,12 +23749,43 @@
 	    }
 	};
 
-	var _app = __webpack_require__(201);
+	var _app = __webpack_require__(205);
 
 	var initialState = {
 	    list: [],
 	    search: []
 	};
+
+/***/ },
+/* 205 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.searchCards = searchCards;
+	exports.addCard = addCard;
+	var APP_SEARCH = exports.APP_SEARCH = 'APP_SEARCH';
+	var APP_ADD_CARD = exports.APP_ADD_CARD = 'APP_ADD_CARD';
+	// export const APP_SEARCH_CLEAR = 'APP_SEARCH_CLEAR';
+	// export const APP_CARD_LIST_CLEAR = 'APP_CARD_LIST_CLEAR';
+
+	function searchCards(results) {
+	    // debugger;
+	    return {
+	        type: APP_SEARCH,
+	        results: results
+	    };
+	}
+
+	function addCard(card) {
+	    return {
+	        type: APP_ADD_CARD,
+	        card: card
+	    };
+	}
 
 /***/ }
 /******/ ]);
