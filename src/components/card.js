@@ -5,23 +5,35 @@ export default class Card extends Component {
         super(props)
     }
 
+    handleClick() {
+        const card = this.props.data;
+        this.props.onClick(card);
+    }
+
     render () {
         const { data }= this.props;
+        const showImage = this.props.showImage;
+        
         //TODO:
-        //parse svg icons
-        //images
+        //svgeezus all the symbols in parsing
         return (
-            <div className="card-wrapper">
+            <div className="card-wrapper" onClick={this.handleClick.bind(this)}>
                 <div className="card-title">
                     <h3>{data.name}</h3>
                 </div>
                 <div className="card-text">
-                    <span>{data.text}</span>
+                    <span>{data.text? data.text : '[none]' }</span>
                 </div>
-                <div className="card-image">
-                    <img src={data.editions[0].image_url}/>
-                </div>
+                {showImage ? this.renderImage(data) : '' }
             </div>
+        )
+    }
+
+    renderImage(data) {
+        return (
+            <div className="card-image">
+                <img src={data.editions[0].image_url}/>
+            </div>    
         )
     }
 }

@@ -7,12 +7,25 @@ export default class CardSearch extends Component {
     
     handleSubmit (e) {
         e.preventDefault();
-        this.props.onSubmit({text: e.target.search.value});
+        const searchTerm = e.target.search.value
+
+        const url = `https://api.deckbrew.com/mtg/cards?name=${searchTerm}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => this.props.onSubmit(data))
+            .catch(err => console.error(url, err.toString()));
     }
 
     handleChange (e) {
         e.preventDefault();
         this.props.onChange({text: e.target.value});
+    }
+
+    updateSearch(data){
+        //TODO: save searchs in localStorage
+        //TODO: paginated searchs, api return lists by 100, 
+        // if array lenght is > 100 then lookup for page 2, 3 and goes on
+        
     }
 
     render () {

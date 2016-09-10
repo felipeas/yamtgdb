@@ -1,6 +1,11 @@
+.lists {
+    display: flex;
+    flex-direction: row wrap;
+}
+
 .list {
     width: 100%;
-}
+} 
 
 .card-wrapper {
     display: flex;
@@ -20,4 +25,21 @@
 .card-image {
     flex: 1;
     order: 3;
+}
+
+@media (max-width: 600px) 
+{
+    .card-wrapper  
+    {
+        flex-flow: column wrap;
+    }
+
+    .card-title {
+        flex: 1;
+        order: 1;
+    }
+
+    #card-list {
+        display: none;
+    }
 }
