@@ -17,19 +17,25 @@ export default class CardList extends Component {
     }
 
     render () {
-        const { data } = this.props;
-        const { showImages } = this.state ;
+        const { data, showCount } = this.props;
+        const { showImages } = this.state;
+        
+        const counters = data.map((card) => {
+            return (card.id);
+        }).reduce((a,b) => {a === b}); 
 
-        const cards = data.map((card, index) => {
+        const cards = data.map((card, index) => {  
             return (
                 <Card 
                     data={card}
                     key={index}
                     onClick={this.props.onCardClick}
                     showImage={showImages}
-                />);
-            });
-
+                    count={table[card.id]}
+                />
+            );
+        });
+            
         return (
             <div className='list'>
                 <h2>list</h2>

@@ -21,6 +21,9 @@ export default class Card extends Component {
                 <div className="card-title">
                     <h3>{data.name}</h3>
                 </div>
+                <div className="card-count">
+                    <span>{data.count}</span>
+                </div>
                 <div className="card-text">
                     <span>{data.text? data.text : '[none]' }</span>
                 </div>

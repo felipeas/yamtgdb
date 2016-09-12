@@ -20,8 +20,7 @@ export default class CardBox extends Component {
     }
 
     handleOnListClick(card) {
-        const cards = this.state.cards.filter((x) => {x.id != card.id});
-        this.setState({ 'cards': cards });
+        this.setState({ 'cards': this.state.cards.filter((x) => x.id != card.id)});
     }
 
     handleOnSearchSubmit (search) {
