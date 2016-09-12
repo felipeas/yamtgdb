@@ -20,9 +20,13 @@ export default class CardList extends Component {
         const { data, showCount } = this.props;
         const { showImages } = this.state;
         
-        const counters = data.map((card) => {
-            return (card.id);
-        }).reduce((a,b) => {a === b}); 
+        // const cardstemp = ['fog', 'doom-blade', 'ponder', 'fog', 'ponder', 'nip-gwyllion'];
+        const countedList = data.reduce((counter, currCard) => {
+            counter[currCard.id] = (counter[currCard.id] || 0) + 1;
+            return counter;            
+        },{});
+
+        // console.log(countedList);
 
         const cards = data.map((card, index) => {  
             return (
@@ -31,7 +35,7 @@ export default class CardList extends Component {
                     key={index}
                     onClick={this.props.onCardClick}
                     showImage={showImages}
-                    count={table[card.id]}
+                    count={countedList[card.id]}
                 />
             );
         });

@@ -11,7 +11,7 @@ export default class Card extends Component {
     }
 
     render () {
-        const { data }= this.props;
+        const { data, count }= this.props;
         const showImage = this.props.showImage;
         
         //TODO:
@@ -22,7 +22,7 @@ export default class Card extends Component {
                     <h3>{data.name}</h3>
                 </div>
                 <div className="card-count">
-                    <span>{data.count}</span>
+                    <span>{count}</span>
                 </div>
                 <div className="card-text">
                     <span>{data.text? data.text : '[none]' }</span>
