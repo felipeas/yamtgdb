@@ -25,7 +25,6 @@ export default class CardSearch extends Component {
         //TODO: save searchs in localStorage
         //TODO: paginated searchs, api return lists by 100, 
         // if array lenght is > 100 then lookup for page 2, 3 and goes on
-        
     }
 
     render () {
