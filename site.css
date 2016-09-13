@@ -7,6 +7,10 @@
     width: 100%;
 } 
 
+.list-check-images {
+    margin-left: 10px;
+}
+
 .card-wrapper {
     display: flex;
     flex-flow: row wrap;
@@ -17,14 +21,19 @@
     order: 1;
 }
 
+.card-count {
+    flex: 0 5%;
+    order: 2;
+}
+
 .card-text {
     flex: 2;
-    order: 2;
+    order: 3;
 }
 
 .card-image {
     flex: 1;
-    order: 3;
+    order: 4;
 }
 
 @media (max-width: 600px) 
