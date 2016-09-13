@@ -11,6 +11,7 @@ export default class CardList extends Component {
         // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
         console.log(nextProps);
     }
+    
 
     handleCheckboxChange(e) {
         this.setState({showImages: e.target.checked});

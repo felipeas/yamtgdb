@@ -5,7 +5,16 @@ import CardSearch from './card-search';
 export default class CardBox extends Component {
     constructor (props) {
         super(props);
+
         this.state = {search: [], cards: []}
+
+        this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || [];
+        this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards')) || [];
+    }
+
+    componentDidUpdate () {
+        localStorage.setItem('yamtgdb-search', JSON.stringify(this.state.search));
+        localStorage.setItem('yamtgdb-cards', JSON.stringify(this.state.cards));
     }
 
     handleOnSearchChange (search) {
