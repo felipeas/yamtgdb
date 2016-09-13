@@ -19,8 +19,9 @@ export default class Card extends Component {
         return (
             <div className="card-wrapper" onClick={this.handleClick.bind(this)}>
                 <div className="card-title">
-                    <h3>{data.name} - {data.cost}</h3>
+                    <h3>{data.name}</h3>
                 </div>
+
                 <div className="card-count">
                     <span>{count}</span>
                 </div>
@@ -28,6 +29,7 @@ export default class Card extends Component {
                     <span>{data.text? data.text : '[none]' }</span>
                 </div>
                 {showImage ? this.renderImage(data) : '' }
+           
             </div>
         )
     }
