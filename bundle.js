@@ -21460,7 +21460,7 @@
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _cardSearch = __webpack_require__(176);
+	var _cardSearch = __webpack_require__(177);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
@@ -21537,10 +21537,12 @@
 	                    'section',
 	                    { className: 'lists' },
 	                    _react2.default.createElement(_cardList2.default, { id: 'search-list',
+	                        title: 'search',
 	                        data: this.state.search,
 	                        onCardClick: this.handleOnSearchResultClick.bind(this)
 	                    }),
 	                    _react2.default.createElement(_cardList2.default, { id: 'card-list',
+	                        title: 'deck',
 	                        data: this.state.cards,
 	                        onCardClick: this.handleOnListClick.bind(this)
 	                    })
@@ -21601,9 +21603,14 @@
 	            console.log(nextProps);
 	        }
 	    }, {
-	        key: 'handleCheckboxChange',
-	        value: function handleCheckboxChange(e) {
+	        key: 'handleShowImagesChange',
+	        value: function handleShowImagesChange(e) {
 	            this.setState({ showImages: e.target.checked });
+	        }
+	    }, {
+	        key: 'handleShowTextChange',
+	        value: function handleShowTextChange(e) {
+	            this.setState({ showText: e.target.checked });
 	        }
 	    }, {
 	        key: 'render',
@@ -21613,7 +21620,10 @@
 	            var _props = this.props;
 	            var data = _props.data;
 	            var showCount = _props.showCount;
-	            var showImages = this.state.showImages;
+	            var title = _props.title;
+	            var _state = this.state;
+	            var showImages = _state.showImages;
+	            var showText = _state.showText;
 
 
 	            var total = data.length ? data.length : 0;
@@ -21629,12 +21639,15 @@
 	            //Price
 	            //Print
 
+	            debugger;
+
 	            var cards = Array.from(new Set(data)).map(function (card, index) {
 	                return _react2.default.createElement(_card2.default, {
 	                    data: card,
 	                    key: index,
 	                    onClick: _this2.props.onCardClick,
 	                    showImage: showImages,
+	                    showText: showText,
 	                    count: counted[card.id]
 	                });
 	            });
@@ -21645,7 +21658,7 @@
 	                _react2.default.createElement(
 	                    'h2',
 	                    null,
-	                    'list title'
+	                    title
 	                ),
 	                _react2.default.createElement(
 	                    'span',
@@ -21657,10 +21670,20 @@
 	                    { className: 'list-check-images' },
 	                    _react2.default.createElement('input', {
 	                        type: 'checkbox',
-	                        onChange: this.handleCheckboxChange.bind(this),
+	                        onChange: this.handleShowImagesChange.bind(this),
 	                        checked: this.state.showImages
 	                    }),
 	                    'images'
+	                ),
+	                _react2.default.createElement(
+	                    'label',
+	                    { className: 'list-check-text' },
+	                    _react2.default.createElement('input', {
+	                        type: 'checkbox',
+	                        onChange: this.handleShowTextChange.bind(this),
+	                        checked: this.state.showText
+	                    }),
+	                    'text'
 	                ),
 	                cards
 	            );
@@ -21676,7 +21699,7 @@
 /* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -21687,6 +21710,10 @@
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _manaCost = __webpack_require__(176);
+
+	var _manaCost2 = _interopRequireDefault(_manaCost);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21706,62 +21733,71 @@
 	    }
 
 	    _createClass(Card, [{
-	        key: "handleClick",
+	        key: 'handleClick',
 	        value: function handleClick() {
 	            var card = this.props.data;
 	            this.props.onClick(card);
 	        }
 	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var _props = this.props;
 	            var data = _props.data;
 	            var count = _props.count;
 
 	            var showImage = this.props.showImage;
+	            var showText = this.props.showText;
 
 	            //TODO:
 	            //svgeezus all the symbols in parsing
 	            return _react2.default.createElement(
-	                "div",
-	                { className: "card-wrapper", onClick: this.handleClick.bind(this) },
+	                'div',
+	                { className: 'card-wrapper', onClick: this.handleClick.bind(this) },
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-title" },
+	                    'div',
+	                    { className: 'card-title' },
 	                    _react2.default.createElement(
-	                        "h3",
+	                        'span',
 	                        null,
 	                        data.name
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-count" },
+	                    'div',
+	                    { className: 'card-count' },
 	                    _react2.default.createElement(
-	                        "span",
+	                        'span',
 	                        null,
 	                        count
 	                    )
 	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "card-text" },
-	                    _react2.default.createElement(
-	                        "span",
-	                        null,
-	                        data.text ? data.text : '[none]'
-	                    )
-	                ),
+	                showText ? this.renderText(data) : '',
 	                showImage ? this.renderImage(data) : ''
 	            );
 	        }
 	    }, {
-	        key: "renderImage",
+	        key: 'renderImage',
 	        value: function renderImage(data) {
 	            return _react2.default.createElement(
-	                "div",
-	                { className: "card-image" },
-	                _react2.default.createElement("img", { src: data.editions[0].image_url })
+	                'div',
+	                { className: 'card-image' },
+	                _react2.default.createElement('img', { src: data.editions[0].image_url })
+	            );
+	        }
+	    }, {
+	        key: 'renderText',
+	        value: function renderText(data) {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'card-text' },
+	                _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    data.text ? data.text : '[none]'
+	                ),
+	                _react2.default.createElement(_manaCost2.default, {
+	                    data: data.cost
+	                })
 	            );
 	        }
 	    }]);
@@ -21773,6 +21809,74 @@
 
 /***/ },
 /* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // import React, { Component }  from 'react';
+
+	// export default class Zero extends Component {
+	//     render() {
+	//         return (
+	//             <svg className="zero" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-labelledby="title">
+	//                 <title id="title">zero</title>
+	//                 <path fill="#0D0F0F" d="M-922-157.572c0-9.787,2.061-18.813,6.191-27.072c5.117-10.236,12.123-15.355,21.012-15.355
+	// 	c8.797,0,15.666,4.359,20.605,13.064c4.127,7.186,6.191,15.537,6.191,25.051c0,9.881-2.064,18.814-6.191,26.803
+	// 	C-879.223-125.023-886.227-120-895.203-120c-8.531,0-15.305-4.307-20.336-12.926C-919.847-140.287-922-148.502-922-157.572z
+	// 	 M-910.691-162.016c0,12.926,1.93,22.984,5.795,30.168c2.691,5.025,6.146,7.541,10.367,7.541c10.146,0,15.221-10.506,15.221-31.518
+	// 	c0-9.244-0.809-17.059-2.422-23.434c-2.785-10.504-7.498-15.76-14.145-15.76c-9.879,0-14.816,10.15-14.816,30.443V-162.016z"/>
+	//             </svg>
+	//         )
+	//     }
+	// }
+
+	var ManaCost = function (_Component) {
+	    _inherits(ManaCost, _Component);
+
+	    function ManaCost() {
+	        _classCallCheck(this, ManaCost);
+
+	        return _possibleConstructorReturn(this, (ManaCost.__proto__ || Object.getPrototypeOf(ManaCost)).apply(this, arguments));
+	    }
+
+	    _createClass(ManaCost, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    this.props.data
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ManaCost;
+	}(_react.Component);
+
+	exports.default = ManaCost;
+
+/***/ },
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -21842,11 +21946,6 @@
 	            return _react2.default.createElement(
 	                "form",
 	                { className: "search", onSubmit: this.handleSubmit.bind(this) },
-	                _react2.default.createElement(
-	                    "h2",
-	                    null,
-	                    "search"
-	                ),
 	                _react2.default.createElement("input", {
 	                    id: "search",
 	                    type: "text",
