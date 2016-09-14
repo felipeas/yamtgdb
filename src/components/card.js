@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ManaCost from './mana-cost';
 
 export default class Card extends Component {
     constructor (props) {
@@ -13,23 +14,22 @@ export default class Card extends Component {
     render () {
         const { data, count }= this.props;
         const showImage = this.props.showImage;
+        const showText = this.props.showText;
         
         //TODO:
         //svgeezus all the symbols in parsing
         return (
             <div className="card-wrapper" onClick={this.handleClick.bind(this)}>
                 <div className="card-title">
-                    <h3>{data.name}</h3>
+                    <span>{data.name}</span>
                 </div>
 
                 <div className="card-count">
                     <span>{count}</span>
                 </div>
-                <div className="card-text">
-                    <span>{data.text? data.text : '[none]' }</span>
-                </div>
+                
+                {showText ? this.renderText(data) : '' }
                 {showImage ? this.renderImage(data) : '' }
-           
             </div>
         )
     }
@@ -38,6 +38,17 @@ export default class Card extends Component {
         return (
             <div className="card-image">
                 <img src={data.editions[0].image_url}/>
+            </div>    
+        )
+    }
+
+    renderText(data) {
+        return (
+            <div className="card-text">
+                <span>{data.text? data.text : '[none]' }</span>
+                <ManaCost 
+                    data={data.cost}
+                />
             </div>    
         )
     }

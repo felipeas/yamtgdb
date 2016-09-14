@@ -11,18 +11,23 @@
     margin-left: 10px;
 }
 
+.list-check-text {
+    margin-left: 10px;
+}
+
 .card-wrapper {
+    padding-top: 5px;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row-reverse wrap;
 }
 
 .card-title {
-    flex: 1 100%;
+    flex: 0 95%;
     order: 1;
 }
 
 .card-count {
-    flex: 0 5%;
+    flex: 1 5%;
     order: 2;
 }
 

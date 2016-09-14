@@ -11,16 +11,21 @@ export default class CardList extends Component {
         // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
         console.log(nextProps);
     }
-    
 
-    handleCheckboxChange(e) {
+    handleShowImagesChange(e) {
         this.setState({showImages: e.target.checked});
     }
 
-    render () {
-        const { data, showCount } = this.props;
-        const { showImages } = this.state;
+    handleShowTextChange(e) {
+        this.setState({showText: e.target.checked});
+    }
 
+    
+
+    render () {
+        const { data, showCount, title } = this.props;
+        const { showImages, showText } = this.state;
+    
         const total = data.length ? data.length : 0;
 
         const counted = data.reduce((counter, currCard) => {
@@ -34,6 +39,8 @@ export default class CardList extends Component {
         //Price
         //Print
         
+        debugger;
+
         const cards = Array.from(new Set(data))
             .map((card, index) => {  
                 return (
@@ -42,6 +49,7 @@ export default class CardList extends Component {
                         key={index}
                         onClick={this.props.onCardClick}
                         showImage={showImages}
+                        showText={showText}
                         count={counted[card.id]}
                     />
                 );
@@ -49,16 +57,26 @@ export default class CardList extends Component {
             
         return (
             <div className='list'>
-                <h2>list title</h2>
+                <h2>{title}</h2>
                 <span>{`total: ${total}`}</span>
                 <label className='list-check-images'>
                     <input
                         type='checkbox' 
-                        onChange={this.handleCheckboxChange.bind(this)} 
+                        onChange={this.handleShowImagesChange.bind(this)} 
                         checked={this.state.showImages} 
                     />
                     images
                 </label>
+
+                <label className='list-check-text'>
+                    <input
+                        type='checkbox' 
+                        onChange={this.handleShowTextChange.bind(this)} 
+                        checked={this.state.showText} 
+                    />
+                    text
+                </label>
+
                 {cards} 
             </div>
         );

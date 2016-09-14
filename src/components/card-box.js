@@ -46,10 +46,12 @@ export default class CardBox extends Component {
                 />
                 <section className='lists'>
                     <CardList id='search-list'
+                        title='search'
                         data={this.state.search} 
                         onCardClick={this.handleOnSearchResultClick.bind(this)}
                     />
                     <CardList id='card-list'
+                        title='deck'
                         data={this.state.cards}
                         onCardClick={this.handleOnListClick.bind(this)}
                     />

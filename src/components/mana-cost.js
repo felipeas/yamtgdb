@@ -14,3 +14,15 @@
 //         )
 //     }
 // }
+
+import React, { Component }  from 'react';
+
+export default class ManaCost extends Component {
+    render() {
+        return (
+            <div>
+                <span>{this.props.data}</span>
+            </div>
+        );
+    }
+}
