@@ -22,10 +22,13 @@ export default class CardBox extends Component {
     }   
 
     handleOnSearchResultClick(card) {
-        const cards = this.state.cards;
-        //TODO: instead of adding card put a counter on duplicates
-        cards.push(card);
-        this.setState({ 'cards': cards });
+        // const cards = this.state.cards;
+        // //TODO: instead of adding card put a counter on duplicates
+        // cards.push(card);
+        // this.setState({ 'cards': cards });
+
+        const cards = [ ...this.state.cards, card ];
+        this.setState({ cards });        
     }
 
     handleOnListClick(card) {

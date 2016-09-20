@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Card from './card';
+import _ from 'lodash';
 
 export default class CardList extends Component {
     constructor (props) {
@@ -9,7 +10,6 @@ export default class CardList extends Component {
 
     componentWillReceiveProps(nextProps) {
         // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
-        console.log(nextProps);
     }
 
     handleShowImagesChange(e) {
@@ -20,41 +20,47 @@ export default class CardList extends Component {
         this.setState({showText: e.target.checked});
     }
 
-    
-
     render () {
-        const { data, showCount, title } = this.props;
-        const { showImages, showText } = this.state;
+        const { data, title } = this.props
+        const { showImages, showText } = this.state
     
-        const total = data.length ? data.length : 0;
+        const total = data.length ? data.length : 0
+        
+        // const final = {};
+        const final = data.reduce((grouped, currCard) => {
+            console.log(grouped)
+            
+            grouped[currCard.id] = grouped[currCard.id] ? grouped[currCard.id] : {count : 0, card: currCard}
+            grouped[currCard.id].count +=  + 1
+            
+            return grouped
+        },{})
 
-        const counted = data.reduce((counter, currCard) => {
-            counter[currCard.id] = (counter[currCard.id] || 0) + 1;
-            return counter;            
-        },{});
-
+        const grouped = _.values(final)
+        
+        const showCount = total != grouped.length
         //TODO:
         //Legality
         //Mana curve
+        //Editions
         //Price
         //Print
-        
-        debugger;
 
-        const cards = Array.from(new Set(data))
-            .map((card, index) => {  
+        const cards = grouped
+            .map((item, index) => {  
                 return (
                     <Card 
-                        data={card}
+                        data={item.card}
                         key={index}
                         onClick={this.props.onCardClick}
                         showImage={showImages}
                         showText={showText}
-                        count={counted[card.id]}
+                        showCount={showCount}
+                        count={item.count}
                     />
                 );
              });
-            
+    
         return (
             <div className='list'>
                 <h2>{title}</h2>

@@ -13,8 +13,7 @@ export default class Card extends Component {
 
     render () {
         const { data, count }= this.props;
-        const showImage = this.props.showImage;
-        const showText = this.props.showText;
+        const { showImage, showText, showCount }  = this.props;
         
         //TODO:
         //svgeezus all the symbols in parsing
@@ -24,10 +23,8 @@ export default class Card extends Component {
                     <span>{data.name}</span>
                 </div>
 
-                <div className="card-count">
-                    <span>{count}</span>
-                </div>
                 
+                {showCount ? this.renderCount(count) : '' }
                 {showText ? this.renderText(data) : '' }
                 {showImage ? this.renderImage(data) : '' }
             </div>
@@ -50,6 +47,14 @@ export default class Card extends Component {
                     data={data.cost}
                 />
             </div>    
+        )
+    }
+
+    renderCount(data) {
+        return (
+            <div className="card-count">
+                <span>{data}</span>
+            </div>   
         )
     }
 }
