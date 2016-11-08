@@ -22,23 +22,24 @@ export default class CardList extends Component {
 
     render () {
         const { data, title } = this.props
-        const { showImages, showText } = this.state
-    
-        const total = data.length ? data.length : 0
-        
-        // const final = {};
-        const final = data.reduce((grouped, currCard) => {
-            console.log(grouped)
-            
-            grouped[currCard.id] = grouped[currCard.id] ? grouped[currCard.id] : {count : 0, card: currCard}
-            grouped[currCard.id].count +=  + 1
-            
-            return grouped
-        },{})
 
-        const grouped = _.values(final)
+        const { showImages, showText } = this.state
+
+        // const grouped = _.groupBy(data.list, 'id')
         
-        const showCount = total != grouped.length
+        // const showCount = total != grouped.length
+        const showCount = true
+
+        // const total = data.counter.reduce((sum, card) => {
+        //     console.log(sum)
+        //     data.counter[card.id] = data.counter[card.id] ? data.counter[card.id] : 0
+        //     return sum += data.counter[card.id]
+        // }, 0)
+        // const total = 666;
+debugger
+        const total = _.values(data.counter).reduce((soma, atual) => {
+            return soma + atual
+        }, 0)
         //TODO:
         //Legality
         //Mana curve
@@ -46,17 +47,17 @@ export default class CardList extends Component {
         //Price
         //Print
 
-        const cards = grouped
+        const cards = data.list
             .map((item, index) => {  
                 return (
                     <Card 
-                        data={item.card}
+                        data={item}
                         key={index}
                         onClick={this.props.onCardClick}
                         showImage={showImages}
                         showText={showText}
                         showCount={showCount}
-                        count={item.count}
+                        count={data.counter[item.id]}
                     />
                 );
              });
@@ -65,13 +66,13 @@ export default class CardList extends Component {
             <div className='list'>
                 <h2>{title}</h2>
                 <span>{`total: ${total}`}</span>
-                <label className='list-check-images'>
+                <label className='list-check-image'>
                     <input
                         type='checkbox' 
                         onChange={this.handleShowImagesChange.bind(this)} 
                         checked={this.state.showImages} 
                     />
-                    images
+                    image
                 </label>
 
                 <label className='list-check-text'>

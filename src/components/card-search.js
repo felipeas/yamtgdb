@@ -3,17 +3,36 @@ import React, { Component } from 'react';
 export default class CardSearch extends Component {
     constructor (props) {
         super(props)
+
+        this.state = {
+            isFetching: false
+        }
     }
+
+    componentDidUpdate (nextProps, nextState) {
+        console.log(nextProps)
+        console.log(nextState)
+    }    
     
     handleSubmit (e) {
         e.preventDefault();
-        const searchTerm = e.target.search.value
 
+        const searchTerm = e.target.search.value
         const url = `https://api.deckbrew.com/mtg/cards?name=${searchTerm}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => this.props.onSubmit(data))
-            .catch(err => console.error(url, err.toString()));
+
+        this.setState({
+                isFetching: true
+            },
+            () => {
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    this.props.onSubmit(data)
+                    this.setState({isFetching: false})
+                })
+                .catch(err => console.error(url, err.toString()));
+            }
+        );
     }
 
     handleChange (e) {
@@ -37,6 +56,11 @@ export default class CardSearch extends Component {
                     placeholder="search"
                     onChange={this.handleChange.bind(this)}
                 />
+                <label
+                    style={this.state.isFetching ? {display:'block'} : {display: 'none' }}    
+                >
+                    isFetching
+                </label>
             </form>
         )
     }
