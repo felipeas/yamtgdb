@@ -21482,10 +21482,19 @@
 
 	        var _this = _possibleConstructorReturn(this, (CardBox.__proto__ || Object.getPrototypeOf(CardBox)).call(this, props));
 
-	        _this.state = { search: [], cards: [] };
+	        _this.state = {
+	            search: {
+	                list: [],
+	                counter: {}
+	            },
+	            cards: {
+	                list: [],
+	                counter: {}
+	            }
+	        };
 
-	        _this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || [];
-	        _this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards')) || [];
+	        _this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || _this.state.search;
+	        _this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards')) || _this.state.cards;
 	        return _this;
 	    }
 
@@ -21498,30 +21507,59 @@
 	    }, {
 	        key: 'handleOnSearchChange',
 	        value: function handleOnSearchChange(search) {
-	            // console.log(search);
+	            // console.log(search)
 	        }
 	    }, {
 	        key: 'handleOnSearchResultClick',
 	        value: function handleOnSearchResultClick(card) {
-	            // const cards = this.state.cards;
-	            // //TODO: instead of adding card put a counter on duplicates
-	            // cards.push(card);
-	            // this.setState({ 'cards': cards });
+	            console.log(card.id + ' - ' + card.name);
+	            var list = this.state.cards.list;
+	            var counter = this.state.cards.counter;
 
-	            var cards = [].concat(_toConsumableArray(this.state.cards), [card]);
+	            var cards = this.state.cards;
+
+	            list = list.find(function (x) {
+	                return x.id == card.id;
+	            }) ? list : [].concat(_toConsumableArray(list), [card]);
+	            counter[card.id] = counter[card.id] ? counter[card.id] += 1 : 1;
+
+	            cards.list = list;
+	            cards.counter = counter;
+
 	            this.setState({ cards: cards });
 	        }
 	    }, {
 	        key: 'handleOnListClick',
 	        value: function handleOnListClick(card) {
-	            this.setState({ 'cards': this.state.cards.filter(function (x) {
-	                    return x.id != card.id;
-	                }) });
+	            console.log(card.id + ' - ' + card.name);
+	            var list = this.state.cards.list.filter(function (x) {
+	                return x.id != card.id;
+	            });
+	            var counter = this.state.cards.counter;
+
+	            counter[card.id] = list.filter(function (x) {
+	                x.id == card.id;
+	            }).length;
+
+	            var cards = this.state.cards;
+
+	            cards.list = list;
+	            cards.counter = counter;
+
+	            this.setState({ cards: cards });
 	        }
 	    }, {
 	        key: 'handleOnSearchSubmit',
 	        value: function handleOnSearchSubmit(search) {
-	            this.setState({ 'search': search });
+	            this.setState({
+	                search: {
+	                    list: search,
+	                    counter: search.reduce(function (counter, card) {
+	                        counter[card.id] = 1;
+	                        return counter;
+	                    }, {})
+	                }
+	            });
 	        }
 	    }, {
 	        key: 'render',
@@ -21549,7 +21587,8 @@
 	                    _react2.default.createElement(_cardList2.default, { id: 'card-list',
 	                        title: 'deck',
 	                        data: this.state.cards,
-	                        onCardClick: this.handleOnListClick.bind(this)
+	                        onCardClick: this.handleOnListClick.bind(this),
+	                        grouped: 'true'
 	                    })
 	                )
 	            );
@@ -21633,37 +21672,27 @@
 	            var showText = _state.showText;
 
 
-	            var total = data.length ? data.length : 0;
+	            var showCount = true;
 
-	            // const final = {};
-	            var final = data.reduce(function (grouped, currCard) {
-	                console.log(grouped);
-
-	                grouped[currCard.id] = grouped[currCard.id] ? grouped[currCard.id] : { count: 0, card: currCard };
-	                grouped[currCard.id].count += +1;
-
-	                return grouped;
-	            }, {});
-
-	            var grouped = _lodash2.default.values(final);
-
-	            var showCount = total != grouped.length;
+	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
 	            //TODO:
-	            //Legality
+	            //Legality / formats
 	            //Mana curve
 	            //Editions
 	            //Price
 	            //Print
 
-	            var cards = grouped.map(function (item, index) {
+	            var cards = data.list.map(function (item, index) {
 	                return _react2.default.createElement(_card2.default, {
-	                    data: item.card,
+	                    data: item,
 	                    key: index,
 	                    onClick: _this2.props.onCardClick,
 	                    showImage: showImages,
 	                    showText: showText,
 	                    showCount: showCount,
-	                    count: item.count
+	                    count: data.counter[item.id]
 	                });
 	            });
 
@@ -21682,13 +21711,13 @@
 	                ),
 	                _react2.default.createElement(
 	                    'label',
-	                    { className: 'list-check-images' },
+	                    { className: 'list-check-image' },
 	                    _react2.default.createElement('input', {
 	                        type: 'checkbox',
 	                        onChange: this.handleShowImagesChange.bind(this),
 	                        checked: this.state.showImages
 	                    }),
-	                    'images'
+	                    'image'
 	                ),
 	                _react2.default.createElement(
 	                    'label',
@@ -38845,24 +38874,41 @@
 	    function CardSearch(props) {
 	        _classCallCheck(this, CardSearch);
 
-	        return _possibleConstructorReturn(this, (CardSearch.__proto__ || Object.getPrototypeOf(CardSearch)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (CardSearch.__proto__ || Object.getPrototypeOf(CardSearch)).call(this, props));
+
+	        _this.state = {
+	            isFetching: false
+	        };
+	        return _this;
 	    }
 
 	    _createClass(CardSearch, [{
+	        key: "componentDidUpdate",
+	        value: function componentDidUpdate(nextProps, nextState) {
+	            console.log(nextProps);
+	            console.log(nextState);
+	        }
+	    }, {
 	        key: "handleSubmit",
 	        value: function handleSubmit(e) {
 	            var _this2 = this;
 
 	            e.preventDefault();
-	            var searchTerm = e.target.search.value;
 
+	            var searchTerm = e.target.search.value;
 	            var url = "https://api.deckbrew.com/mtg/cards?name=" + searchTerm;
-	            fetch(url).then(function (response) {
-	                return response.json();
-	            }).then(function (data) {
-	                return _this2.props.onSubmit(data);
-	            }).catch(function (err) {
-	                return console.error(url, err.toString());
+
+	            this.setState({
+	                isFetching: true
+	            }, function () {
+	                fetch(url).then(function (response) {
+	                    return response.json();
+	                }).then(function (data) {
+	                    _this2.props.onSubmit(data);
+	                    _this2.setState({ isFetching: false });
+	                }).catch(function (err) {
+	                    return console.error(url, err.toString());
+	                });
 	            });
 	        }
 	    }, {
@@ -38891,7 +38937,14 @@
 	                    type: "text",
 	                    placeholder: "search",
 	                    onChange: this.handleChange.bind(this)
-	                })
+	                }),
+	                _react2.default.createElement(
+	                    "label",
+	                    {
+	                        style: this.state.isFetching ? { display: 'block' } : { display: 'none' }
+	                    },
+	                    "isFetching"
+	                )
 	            );
 	        }
 	    }]);
