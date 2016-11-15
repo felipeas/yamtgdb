@@ -20,71 +20,100 @@ export default class CardList extends Component {
         this.setState({showText: e.target.checked});
     }
 
-    render () {
-        const { data, title } = this.props
+    typeFilter(filter, card) {
+        return card.types.indexOf(filter) != -1
+    }
 
+    renderAll(list, counter) { 
+        return this.renderGroup(null, list, counter)
+    }
+
+    renderGroup (title, list, counter) { 
         const { showImages, showText } = this.state
-
-        // const grouped = _.groupBy(data.list, 'id')
-        
-        // const showCount = total != grouped.length
         const showCount = true
 
-        // const total = data.counter.reduce((sum, card) => {
-        //     console.log(sum)
-        //     data.counter[card.id] = data.counter[card.id] ? data.counter[card.id] : 0
-        //     return sum += data.counter[card.id]
-        // }, 0)
-        // const total = 666;
-debugger
+        let betterCounter = {}
+        list.forEach(card => {
+            betterCounter[card.id] = counter[card.id]
+        })
+
+        const total = _.values(betterCounter).reduce((soma, atual) => {
+            return soma + atual
+        }, 0)
+ 
+        const cards = list.map((item, index) => {  
+            return (
+                <Card 
+                    data={item}
+                    key={index}
+                    onClick={this.props.onCardClick}
+                    showImage={showImages}
+                    showText={showText}
+                    showCount={showCount}
+                    count={counter[item.id]}
+                />
+            );
+        });
+
+        if (title) {
+            return (
+                <div className='list-header'>
+                    <span className='list-header-subtotal'>{total}</span>
+                    <span className='list-header-type'>{title}</span>
+                    {cards}
+                </div>
+            )
+        }
+        return cards
+    }
+
+    render () {
+        const { data, name, grouped } = this.props
+
+        const { typeFilter } = this
+
         const total = _.values(data.counter).reduce((soma, atual) => {
             return soma + atual
         }, 0)
+        
         //TODO:
-        //Legality
+        //Legality / formats
         //Mana curve
         //Editions
         //Price
         //Print
+        
+        let cards = []
+        let creatures = []
+        let lands = []
+        let other = []
 
-        const cards = data.list
-            .map((item, index) => {  
-                return (
-                    <Card 
-                        data={item}
-                        key={index}
-                        onClick={this.props.onCardClick}
-                        showImage={showImages}
-                        showText={showText}
-                        showCount={showCount}
-                        count={data.counter[item.id]}
-                    />
-                );
-             });
-    
+        if (!grouped) {
+            cards = this.renderAll(data.list, data.counter)
+        } else {
+            lands = this.renderGroup(
+                'lands',
+                data.list.filter(card => typeFilter('land', card)),
+                data.counter
+            )
+
+            creatures = this.renderGroup(
+                'creatures',
+                data.list.filter(card => typeFilter('creature', card)),
+                data.counter
+            )
+        }
+
         return (
             <div className='list'>
-                <h2>{title}</h2>
-                <span>{`total: ${total}`}</span>
-                <label className='list-check-image'>
-                    <input
-                        type='checkbox' 
-                        onChange={this.handleShowImagesChange.bind(this)} 
-                        checked={this.state.showImages} 
-                    />
-                    image
-                </label>
-
-                <label className='list-check-text'>
-                    <input
-                        type='checkbox' 
-                        onChange={this.handleShowTextChange.bind(this)} 
-                        checked={this.state.showText} 
-                    />
-                    text
-                </label>
-
-                {cards} 
+                <h2>{name}</h2>
+                <div className='list-header'>
+                    <span className='list-header-total'>{total}</span>
+                </div>
+                {cards}
+                {creatures}
+                {lands}
+                {other}
             </div>
         );
     }

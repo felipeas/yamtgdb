@@ -1,3 +1,20 @@
+body {
+    font-family: Roboto;
+}
+
+.title {
+    display: flex;
+    line-height: 0;
+}
+
+.sub-title {
+    font-size: 10px;
+}
+
+.search {
+    display: inline;
+}
+
 .lists {
     display: flex;
     flex-direction: row wrap;
@@ -6,6 +23,22 @@
 .list {
     width: 100%;
 } 
+
+.list-header {
+    padding: 5px;
+    /*border: 1px solid blueviolet;*/
+}
+
+.list-header-type {
+    margin-left: 2%;
+    font-weight: bold;
+    /*border: 1px solid blueviolet;*/
+}
+
+.list-header-subtotal {
+    font-weight: bold;
+    /*border: 1px solid blueviolet;*/
+}
 
 .list-check-image {
     margin-left: 10px;
@@ -16,22 +49,27 @@
 }
 
 .card-wrapper {
-    padding-top: 5px;
+    padding: 5px;
     display: flex;
-    flex-flow: row-reverse wrap;
+    /*border: solid 1px blue;*/
 }
 
 .card-title {
-    flex: 0 95%;
-    order: 1;
+    flex: 2 95%;
+    order: 2;
+    /*border: solid 1px green;*/
 }
 
 .card-count {
     flex: 1 5%;
-    order: 2;
+    order: 1;
+    /*border: solid 1px red;*/
 }
 
 .card-text {
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-bottom: 5px;
     flex: 2;
     order: 3;
 }
@@ -56,4 +94,10 @@
     #card-list {
         display: none;
     }
+}
+
+.tooltip {
+    position: fixed;
+    display: block;
+    margin-top: 30px;
 }

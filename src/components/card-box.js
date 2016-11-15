@@ -36,13 +36,11 @@ export default class CardBox extends Component {
 
         const cards = this.state.cards
 
-        list = list.find((x) => {x.id = card.id}) ? list : [ ...list, card ]
+        list = list.find(x => x.id == card.id) ? list : [ ...list, card ]
         counter[card.id] = counter[card.id] ? counter[card.id] += 1 : 1
         
         cards.list = list
         cards.counter = counter 
-
-        debugger
 
         this.setState({ cards })        
     }
@@ -65,30 +63,42 @@ export default class CardBox extends Component {
         this.setState({ 
             search: { 
                 list: search,
-                counter: []
+                counter: search.reduce((counter, card) => {
+                    counter[card.id] = 1
+                    return counter;
+                }, {})
             } 
         })   
     }
 
     render () {
+        // TODO: 
+        // deck list
+        // load decks
+        // save deck
+        // collection
+
         return (
             <div id='cardbox'>
-                <h1>yamtgdb</h1>
+                <div className='title'>
+                    <h1>yamtgdb</h1>
+                    <span className='sub-title'>yet another magic the gathering deck builder</span>
+                </div>
                 <CardSearch 
                     onChange={this.handleOnSearchChange.bind(this)}
                     onSubmit={this.handleOnSearchSubmit.bind(this)}
                 />
                 <section className='lists'>
                     <CardList id='search-list'
-                        title='search'
+                        name='search'
                         data={this.state.search} 
                         onCardClick={this.handleOnSearchResultClick.bind(this)}
                     />
                     <CardList id='card-list'
-                        title='deck'
+                        name='deck'
                         data={this.state.cards}
                         onCardClick={this.handleOnListClick.bind(this)}
-                        grouped='true'
+                        grouped
                     />
                 </section>
             </div>

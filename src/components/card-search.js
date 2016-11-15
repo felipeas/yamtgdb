@@ -10,8 +10,8 @@ export default class CardSearch extends Component {
     }
 
     componentDidUpdate (nextProps, nextState) {
-        console.log(nextProps)
-        console.log(nextState)
+        // console.log(nextProps)
+        // console.log(nextState)
     }    
     
     handleSubmit (e) {
@@ -41,8 +41,7 @@ export default class CardSearch extends Component {
     }
 
     updateSearch(data){
-        //TODO: save searchs in localStorage
-        //TODO: paginated searchs, api return lists by 100, 
+        // TODO: paginated searchs, api return lists by 100, 
         // if array lenght is > 100 then lookup for page 2, 3 and goes on
     }
 
@@ -59,7 +58,7 @@ export default class CardSearch extends Component {
                 <label
                     style={this.state.isFetching ? {display:'block'} : {display: 'none' }}    
                 >
-                    isFetching
+                    fetching
                 </label>
             </form>
         )
