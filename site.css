@@ -2,6 +2,10 @@ body {
     font-family: Roboto;
 }
 
+.title {
+    display: flex;
+    line-height: 0;
+}
 .search {
     display: inline;
 }
@@ -24,7 +28,7 @@ body {
 }
 
 .card-wrapper {
-    padding-top: 5px;
+    padding: 5px;
     display: flex;
     flex-flow: row-reverse wrap;
 }
@@ -40,6 +44,9 @@ body {
 }
 
 .card-text {
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-bottom: 5px;
     flex: 2;
     order: 3;
 }
@@ -64,4 +71,10 @@ body {
     #card-list {
         display: none;
     }
+}
+
+.tooltip {
+    position: fixed;
+    display: block;
+    margin-top: 30px;
 }

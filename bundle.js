@@ -21460,7 +21460,7 @@
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _cardSearch = __webpack_require__(179);
+	var _cardSearch = __webpack_require__(181);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
@@ -21564,13 +21564,28 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            // TODO: 
+	            // deck list
+	            // load decks
+	            // save deck
+	            // collection
+
 	            return _react2.default.createElement(
 	                'div',
 	                { id: 'cardbox' },
 	                _react2.default.createElement(
-	                    'h1',
-	                    null,
-	                    'yamtgdb'
+	                    'div',
+	                    { className: 'title' },
+	                    _react2.default.createElement(
+	                        'h1',
+	                        null,
+	                        'yamtgdb'
+	                    ),
+	                    _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'yet another magic the gathering deck builder'
+	                    )
 	                ),
 	                _react2.default.createElement(_cardSearch2.default, {
 	                    onChange: this.handleOnSearchChange.bind(this),
@@ -21580,12 +21595,12 @@
 	                    'section',
 	                    { className: 'lists' },
 	                    _react2.default.createElement(_cardList2.default, { id: 'search-list',
-	                        title: 'search',
+	                        name: 'search',
 	                        data: this.state.search,
 	                        onCardClick: this.handleOnSearchResultClick.bind(this)
 	                    }),
 	                    _react2.default.createElement(_cardList2.default, { id: 'card-list',
-	                        title: 'deck',
+	                        name: 'deck',
 	                        data: this.state.cards,
 	                        onCardClick: this.handleOnListClick.bind(this),
 	                        grouped: 'true'
@@ -21620,7 +21635,7 @@
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(177);
+	var _lodash = __webpack_require__(179);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -21666,7 +21681,7 @@
 
 	            var _props = this.props;
 	            var data = _props.data;
-	            var title = _props.title;
+	            var name = _props.name;
 	            var _state = this.state;
 	            var showImages = _state.showImages;
 	            var showText = _state.showText;
@@ -21677,6 +21692,7 @@
 	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
 	                return soma + atual;
 	            }, 0);
+
 	            //TODO:
 	            //Legality / formats
 	            //Mana curve
@@ -21702,7 +21718,7 @@
 	                _react2.default.createElement(
 	                    'h2',
 	                    null,
-	                    title
+	                    name
 	                ),
 	                _react2.default.createElement(
 	                    'span',
@@ -21711,8 +21727,12 @@
 	                ),
 	                _react2.default.createElement(
 	                    'label',
-	                    { className: 'list-check-image' },
+	                    {
+	                        className: 'list-check-image',
+	                        style: { display: 'none' }
+	                    },
 	                    _react2.default.createElement('input', {
+
 	                        type: 'checkbox',
 	                        onChange: this.handleShowImagesChange.bind(this),
 	                        checked: this.state.showImages
@@ -21759,6 +21779,10 @@
 
 	var _manaCost2 = _interopRequireDefault(_manaCost);
 
+	var _tooltip = __webpack_require__(177);
+
+	var _tooltip2 = _interopRequireDefault(_tooltip);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21797,20 +21821,27 @@
 	            //svgeezus all the symbols in parsing
 
 	            return _react2.default.createElement(
-	                'div',
-	                { className: 'card-wrapper', onClick: this.handleClick.bind(this) },
+	                _tooltip2.default,
+	                {
+	                    element: this.renderImage(data),
+	                    place: 'top'
+	                },
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'card-title' },
+	                    { className: 'card-wrapper', onClick: this.handleClick.bind(this) },
 	                    _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        data.name
-	                    )
-	                ),
-	                showCount ? this.renderCount(count) : '',
-	                showText ? this.renderText(data) : '',
-	                showImage ? this.renderImage(data) : ''
+	                        'div',
+	                        { className: 'card-title' },
+	                        _react2.default.createElement(
+	                            'span',
+	                            null,
+	                            data.name
+	                        )
+	                    ),
+	                    showCount ? this.renderCount(count) : '',
+	                    showText ? this.renderText(data) : '',
+	                    showImage ? this.renderImage(data) : ''
+	                )
 	            );
 	        }
 	    }, {
@@ -21928,6 +21959,216 @@
 
 /***/ },
 /* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(35);
+
+	var _renderIntoBody = __webpack_require__(178);
+
+	var _renderIntoBody2 = _interopRequireDefault(_renderIntoBody);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Tooltip = function (_Component) {
+	    _inherits(Tooltip, _Component);
+
+	    function Tooltip(props) {
+	        _classCallCheck(this, Tooltip);
+
+	        var _this = _possibleConstructorReturn(this, (Tooltip.__proto__ || Object.getPrototypeOf(Tooltip)).call(this, props));
+
+	        _this.state = {
+	            isVisible: null,
+	            left: 0,
+	            top: 0
+	        };
+
+	        _this.handleMouseEnter = _this.handleMouseEnter.bind(_this);
+	        _this.handleMouseLeave = _this.handleMouseLeave.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Tooltip, [{
+	        key: 'handleMouseEnter',
+	        value: function handleMouseEnter(e) {
+	            var node = (0, _reactDom.findDOMNode)(this);
+	            var rect = node.getClientRects();
+
+	            this.setState({
+	                isVisible: true,
+	                left: rect[0].left,
+	                top: rect[0].top
+	            });
+
+	            e.preventDefault();
+	            e.stopPropagation();
+	        }
+	    }, {
+	        key: 'handleMouseLeave',
+	        value: function handleMouseLeave(e) {
+	            this.setState({
+	                isVisible: false
+	            });
+
+	            e.preventDefault();
+	            e.stopPropagation();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var children = this.props.children;
+
+
+	            return _react2.default.createElement(
+	                'div',
+	                {
+	                    onMouseEnter: this.handleMouseEnter,
+	                    onMouseLeave: this.handleMouseLeave
+	                },
+	                children,
+	                this.state.isVisible ? _react2.default.createElement(
+	                    _renderIntoBody2.default,
+	                    null,
+	                    this.renderTooltip()
+	                ) : null
+	            );
+	        }
+	    }, {
+	        key: 'renderTooltip',
+	        value: function renderTooltip() {
+	            var _props = this.props;
+	            var element = _props.element;
+	            var place = _props.place;
+	            var children = _props.children;
+
+
+	            if (!children) {
+	                return null;
+	            }
+
+	            var style = {
+	                left: this.state.left,
+	                top: this.state.top,
+	                zIndex: 30,
+	                display: 'block'
+	            };
+
+	            return _react2.default.createElement(
+	                'div',
+	                {
+	                    style: style,
+	                    className: 'tooltip'
+	                },
+	                element
+	            );
+	        }
+	    }]);
+
+	    return Tooltip;
+	}(_react.Component);
+
+	Tooltip.propTypes = {
+	    element: _react.PropTypes.element,
+	    place: _react.PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+	    children: _react.PropTypes.node.isRequired
+	};
+
+	exports.default = Tooltip;
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _reactDom = __webpack_require__(35);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RenderIntoBody = function (_Component) {
+	    _inherits(RenderIntoBody, _Component);
+
+	    function RenderIntoBody() {
+	        _classCallCheck(this, RenderIntoBody);
+
+	        return _possibleConstructorReturn(this, (RenderIntoBody.__proto__ || Object.getPrototypeOf(RenderIntoBody)).apply(this, arguments));
+	    }
+
+	    _createClass(RenderIntoBody, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.container = document.createElement('div');
+	            document.body.appendChild(this.container);
+	            this.renderIntoBody();
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            this.renderIntoBody();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            _reactDom2.default.unmountComponentAtNode(this.container);
+	            document.body.removeChild(this.container);
+	        }
+	    }, {
+	        key: 'renderIntoBody',
+	        value: function renderIntoBody() {
+	            _reactDom2.default.render(this.props.children, this.container);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return null;
+	        }
+	    }]);
+
+	    return RenderIntoBody;
+	}(_react.Component);
+
+	RenderIntoBody.propTypes = {
+	    children: _react.PropTypes.node.isRequired
+	};
+
+	exports.default = RenderIntoBody;
+
+/***/ },
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -38826,10 +39067,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(178)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(180)(module)))
 
 /***/ },
-/* 178 */
+/* 180 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -38845,7 +39086,7 @@
 
 
 /***/ },
-/* 179 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
