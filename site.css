@@ -6,6 +6,11 @@ body {
     display: flex;
     line-height: 0;
 }
+
+.sub-title {
+    font-size: 10px;
+}
+
 .search {
     display: inline;
 }
@@ -19,6 +24,22 @@ body {
     width: 100%;
 } 
 
+.list-header {
+    padding: 5px;
+    /*border: 1px solid blueviolet;*/
+}
+
+.list-header-type {
+    margin-left: 2%;
+    font-weight: bold;
+    /*border: 1px solid blueviolet;*/
+}
+
+.list-header-subtotal {
+    font-weight: bold;
+    /*border: 1px solid blueviolet;*/
+}
+
 .list-check-image {
     margin-left: 10px;
 }
@@ -30,17 +51,19 @@ body {
 .card-wrapper {
     padding: 5px;
     display: flex;
-    flex-flow: row-reverse wrap;
+    /*border: solid 1px blue;*/
 }
 
 .card-title {
-    flex: 0 95%;
-    order: 1;
+    flex: 2 95%;
+    order: 2;
+    /*border: solid 1px green;*/
 }
 
 .card-count {
     flex: 1 5%;
-    order: 2;
+    order: 1;
+    /*border: solid 1px red;*/
 }
 
 .card-text {

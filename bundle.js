@@ -21512,7 +21512,6 @@
 	    }, {
 	        key: 'handleOnSearchResultClick',
 	        value: function handleOnSearchResultClick(card) {
-	            console.log(card.id + ' - ' + card.name);
 	            var list = this.state.cards.list;
 	            var counter = this.state.cards.counter;
 
@@ -21531,7 +21530,6 @@
 	    }, {
 	        key: 'handleOnListClick',
 	        value: function handleOnListClick(card) {
-	            console.log(card.id + ' - ' + card.name);
 	            var list = this.state.cards.list.filter(function (x) {
 	                return x.id != card.id;
 	            });
@@ -21583,7 +21581,7 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        'span',
-	                        null,
+	                        { className: 'sub-title' },
 	                        'yet another magic the gathering deck builder'
 	                    )
 	                ),
@@ -21603,7 +21601,7 @@
 	                        name: 'deck',
 	                        data: this.state.cards,
 	                        onCardClick: this.handleOnListClick.bind(this),
-	                        grouped: 'true'
+	                        grouped: true
 	                    })
 	                )
 	            );
@@ -21655,7 +21653,13 @@
 
 	        var _this = _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
 
-	        _this.state = { showImages: false };
+	        _this.state = {
+	            showImages: false,
+	            editingTitle: false
+	        };
+
+	        _this.handleClickTitle = _this.handleClickTitle.bind(_this);
+	        _this.handleEditTitle = _this.handleEditTitle.bind(_this);
 	        return _this;
 	    }
 
@@ -21675,19 +21679,108 @@
 	            this.setState({ showText: e.target.checked });
 	        }
 	    }, {
-	        key: 'render',
-	        value: function render() {
+	        key: 'handleClickTitle',
+	        value: function handleClickTitle(e) {
+	            this.setState({ editingTitle: true });
+	        }
+	    }, {
+	        key: 'handleEditTitle',
+	        value: function handleEditTitle(e) {
+	            this.setState({ editingTitle: false });
+	        }
+	    }, {
+	        key: 'typeFilter',
+	        value: function typeFilter(filter, card) {
+	            return card.types.indexOf(filter) != -1;
+	        }
+	    }, {
+	        key: 'renderAll',
+	        value: function renderAll(list, counter) {
+	            return this.renderGroup(null, list, counter);
+	        }
+	    }, {
+	        key: 'renderGroup',
+	        value: function renderGroup(title, list, counter) {
 	            var _this2 = this;
 
-	            var _props = this.props;
-	            var data = _props.data;
-	            var name = _props.name;
 	            var _state = this.state;
 	            var showImages = _state.showImages;
 	            var showText = _state.showText;
 
-
 	            var showCount = true;
+
+	            var betterCounter = {};
+	            list.forEach(function (card) {
+	                betterCounter[card.id] = counter[card.id];
+	            });
+
+	            var total = _lodash2.default.values(betterCounter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
+
+	            var cards = list.map(function (item, index) {
+	                return _react2.default.createElement(_card2.default, {
+	                    data: item,
+	                    key: index,
+	                    onClick: _this2.props.onCardClick,
+	                    showImage: showImages,
+	                    showText: showText,
+	                    showCount: showCount,
+	                    count: counter[item.id]
+	                });
+	            });
+
+	            if (title) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'list-header' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'list-header-subtotal' },
+	                        total
+	                    ),
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'list-header-type' },
+	                        title
+	                    ),
+	                    cards
+	                );
+	            }
+	            return cards;
+	        }
+	    }, {
+	        key: 'renderTitle',
+	        value: function renderTitle(self, name) {
+	            return _react2.default.createElement(
+	                'h2',
+	                {
+	                    onClick: self.handleClickTitle()
+	                },
+	                name
+	            );
+	        }
+	    }, {
+	        key: 'renderInput',
+	        value: function renderInput(self, name) {
+	            return _react2.default.createElement('input', {
+	                type: 'text',
+	                placeholder: name,
+	                onClick: self.handleEditTitle()
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var data = _props.data;
+	            var name = _props.name;
+	            var grouped = _props.grouped;
+	            var editingTitle = this.state.editingTitle;
+	            var typeFilter = this.typeFilter;
+	            var renderInput = this.renderInput;
+	            var renderTitle = this.renderTitle;
+
 
 	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
 	                return soma + atual;
@@ -21700,54 +21793,38 @@
 	            //Price
 	            //Print
 
-	            var cards = data.list.map(function (item, index) {
-	                return _react2.default.createElement(_card2.default, {
-	                    data: item,
-	                    key: index,
-	                    onClick: _this2.props.onCardClick,
-	                    showImage: showImages,
-	                    showText: showText,
-	                    showCount: showCount,
-	                    count: data.counter[item.id]
-	                });
-	            });
+	            var cards = [];
+
+	            if (!grouped) {
+	                cards = this.renderAll(data.list, data.counter);
+	            } else {
+	                var lands = this.renderGroup('lands', data.list.filter(function (card) {
+	                    return typeFilter('land', card);
+	                }), data.counter);
+
+	                var creatures = this.renderGroup('creatures', data.list.filter(function (card) {
+	                    return typeFilter('creature', card);
+	                }), data.counter);
+
+	                var other = this.renderGroup('other', data.list.filter(function (card) {
+	                    return !typeFilter('land', card) && !typeFilter('creature', card);
+	                }), data.counter);
+
+	                cards = [lands, creatures, other];
+	            }
 
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'list' },
+	                editingTitle ? renderInput(this, name) : renderTitle(this, name),
 	                _react2.default.createElement(
-	                    'h2',
-	                    null,
-	                    name
-	                ),
-	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    'total: ' + total
-	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    {
-	                        className: 'list-check-image',
-	                        style: { display: 'none' }
-	                    },
-	                    _react2.default.createElement('input', {
-
-	                        type: 'checkbox',
-	                        onChange: this.handleShowImagesChange.bind(this),
-	                        checked: this.state.showImages
-	                    }),
-	                    'image'
-	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    { className: 'list-check-text' },
-	                    _react2.default.createElement('input', {
-	                        type: 'checkbox',
-	                        onChange: this.handleShowTextChange.bind(this),
-	                        checked: this.state.showText
-	                    }),
-	                    'text'
+	                    'div',
+	                    { className: 'list-header' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'list-header-total' },
+	                        total
+	                    )
 	                ),
 	                cards
 	            );
@@ -21847,6 +21924,7 @@
 	    }, {
 	        key: 'renderImage',
 	        value: function renderImage(data) {
+	            console.log(data);
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'card-image' },
@@ -39126,8 +39204,8 @@
 	    _createClass(CardSearch, [{
 	        key: "componentDidUpdate",
 	        value: function componentDidUpdate(nextProps, nextState) {
-	            console.log(nextProps);
-	            console.log(nextState);
+	            // console.log(nextProps)
+	            // console.log(nextState)
 	        }
 	    }, {
 	        key: "handleSubmit",
@@ -39161,8 +39239,7 @@
 	    }, {
 	        key: "updateSearch",
 	        value: function updateSearch(data) {
-	            //TODO: save searchs in localStorage
-	            //TODO: paginated searchs, api return lists by 100, 
+	            // TODO: paginated searchs, api return lists by 100, 
 	            // if array lenght is > 100 then lookup for page 2, 3 and goes on
 	        }
 	    }, {
@@ -39184,7 +39261,7 @@
 	                    {
 	                        style: this.state.isFetching ? { display: 'block' } : { display: 'none' }
 	                    },
-	                    "isFetching"
+	                    "fetching"
 	                )
 	            );
 	        }
