@@ -5,7 +5,13 @@ import _ from 'lodash';
 export default class CardList extends Component {
     constructor (props) {
         super(props)
-        this.state = {showImages: false}
+        this.state = {
+            showImages: false,
+            editingTitle: false
+        }
+
+        this.handleClickTitle = this.handleClickTitle.bind(this)
+        this.handleEditTitle = this.handleEditTitle.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -18,6 +24,14 @@ export default class CardList extends Component {
 
     handleShowTextChange(e) {
         this.setState({showText: e.target.checked});
+    }
+
+    handleClickTitle(e) {
+        this.setState({editingTitle: true});
+    }
+
+    handleEditTitle(e) {
+        this.setState({editingTitle: false});
     }
 
     typeFilter(filter, card) {
@@ -67,10 +81,30 @@ export default class CardList extends Component {
         return cards
     }
 
+    renderTitle(self, name) {
+        return (
+            <h2
+                onClick={self.handleClickTitle()}
+            >
+                {name}
+            </h2>
+        )
+    }
+
+    renderInput(self, name) {
+         return (
+            <input
+                type="text"
+                placeholder={name}
+                onClick={self.handleEditTitle()}
+            />
+        )
+    }
+
     render () {
         const { data, name, grouped } = this.props
-
-        const { typeFilter } = this
+        const { editingTitle } = this.state
+        const { typeFilter, renderInput, renderTitle } = this
 
         const total = _.values(data.counter).reduce((soma, atual) => {
             return soma + atual
@@ -84,36 +118,39 @@ export default class CardList extends Component {
         //Print
         
         let cards = []
-        let creatures = []
-        let lands = []
-        let other = []
 
         if (!grouped) {
             cards = this.renderAll(data.list, data.counter)
         } else {
-            lands = this.renderGroup(
+            const lands = this.renderGroup(
                 'lands',
                 data.list.filter(card => typeFilter('land', card)),
                 data.counter
             )
 
-            creatures = this.renderGroup(
+            const creatures = this.renderGroup(
                 'creatures',
                 data.list.filter(card => typeFilter('creature', card)),
                 data.counter
             )
+
+            const other = this.renderGroup(
+                'other',
+                data.list.filter(card => !typeFilter('land', card) && !typeFilter('creature', card)),
+                data.counter
+            )
+
+            cards = [ lands, creatures, other ]
         }
 
         return (
             <div className='list'>
-                <h2>{name}</h2>
+                {editingTitle ? renderInput(this, name) : renderTitle(this, name)}
+                
                 <div className='list-header'>
                     <span className='list-header-total'>{total}</span>
                 </div>
                 {cards}
-                {creatures}
-                {lands}
-                {other}
             </div>
         );
     }
