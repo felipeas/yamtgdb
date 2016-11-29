@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import CardList from './card-list'
+import SearchList from './search-list'
+import DeckList from './deck-list'
 import CardSearch from './card-search'
 
 export default class CardBox extends Component {
@@ -12,13 +14,20 @@ export default class CardBox extends Component {
                 counter : {}
             },
             cards: {
-                list : [],
-                counter : {}
+                main: {
+                    list : [],
+                    counter : {}
+                },
+                side: {
+                    list : [],
+                    counter : {}
+                }
             }
         }
         
         this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || this.state.search
         this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards'))  || this.state.cards
+        this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks'))  || this.state.decks
     }
 
     componentDidUpdate () {
@@ -31,30 +40,30 @@ export default class CardBox extends Component {
     }   
 
     handleOnSearchResultClick(card) {
-        let list = this.state.cards.list
-        const counter = this.state.cards.counter
+        let list = this.state.cards.main.list
+        const counter = this.state.cards.main.counter
 
         const cards = this.state.cards
 
         list = list.find(x => x.id == card.id) ? list : [ ...list, card ]
         counter[card.id] = counter[card.id] ? counter[card.id] += 1 : 1
         
-        cards.list = list
-        cards.counter = counter 
+        cards.main.list = list
+        cards.main.counter = counter 
 
         this.setState({ cards })        
     }
 
     handleOnListClick(card) {
-        const list = this.state.cards.list.filter((x) => x.id != card.id)
-        const counter = this.state.cards.counter
+        const list = this.state.cards.main.list.filter((x) => x.id != card.id)
+        const counter = this.state.cards.main.counter
         
         counter[card.id] = list.filter((x) => {x.id == card.id}).length
         
         const cards = this.state.cards
 
-        cards.list = list
-        cards.counter = counter 
+        cards.main.list = list
+        cards.main.counter = counter 
 
         this.setState({ cards })     
     }
@@ -78,6 +87,20 @@ export default class CardBox extends Component {
         // save deck
         // collection
 
+        const { search, cards } = this.state
+
+        const decks = [
+            {
+                name: 'dummy'
+            },
+            {
+                name: 'deck'
+            },
+            {
+                name: 'list'
+            }
+        ]
+
         return (
             <div id='cardbox'>
                 <div className='title'>
@@ -89,16 +112,23 @@ export default class CardBox extends Component {
                     onSubmit={this.handleOnSearchSubmit.bind(this)}
                 />
                 <section className='lists'>
-                    <CardList id='search-list'
+                    <SearchList 
+                        id='search-list'
                         name='search'
-                        data={this.state.search} 
+                        className='search'
+                        data={search} 
                         onCardClick={this.handleOnSearchResultClick.bind(this)}
                     />
-                    <CardList id='card-list'
+                    <CardList 
+                        id='card-list'
                         name='deck'
-                        data={this.state.cards}
+                        className='deck'
+                        data={cards}
                         onCardClick={this.handleOnListClick.bind(this)}
                         grouped
+                    />
+                    <DeckList
+                        data={decks}
                     />
                 </section>
             </div>

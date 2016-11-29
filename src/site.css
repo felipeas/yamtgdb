@@ -12,7 +12,18 @@ body {
 }
 
 .search {
-    display: inline;
+    background-color: sienna;
+    flex: 1 25%;
+}
+
+.deck {
+    background-color: cadetblue;
+    flex: 1 50%;
+}
+
+.deck-list {
+    background-color: indianred;
+    flex: 1 25%;
 }
 
 .lists {
@@ -46,6 +57,18 @@ body {
 
 .list-check-text {
     margin-left: 10px;
+}
+
+.deck-wrapper {
+    padding: 5px;
+    display: flex;
+    /*border: solid 1px blue;*/
+}
+
+.deck-title {
+    flex: 1 100%;
+    order: 1;
+    /*border: solid 1px green;*/
 }
 
 .card-wrapper {

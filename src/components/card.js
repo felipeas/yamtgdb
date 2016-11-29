@@ -37,7 +37,6 @@ export default class Card extends Component {
     }
 
     renderImage(data) {
-        console.log(data)
         return (
             <div className="card-image">
                 <img src={data.editions[0].image_url}/>

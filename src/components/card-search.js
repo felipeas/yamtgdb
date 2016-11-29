@@ -48,7 +48,7 @@ export default class CardSearch extends Component {
     render () {
         const { props } = this;
         return (
-            <form className="search" onSubmit={this.handleSubmit.bind(this)}>
+            <form onSubmit={this.handleSubmit.bind(this)}>
                 <input
                     id="search"
                     type="text"

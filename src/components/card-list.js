@@ -1,37 +1,31 @@
-import React, { Component } from 'react';
-import Card from './card';
-import _ from 'lodash';
+import React, { Component } from 'react'
+import classnames from 'classnames'
+import Card from './card'
+import _ from 'lodash'
 
 export default class CardList extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            showImages: false,
-            editingTitle: false
+            editing: false
         }
 
-        this.handleClickTitle = this.handleClickTitle.bind(this)
-        this.handleEditTitle = this.handleEditTitle.bind(this)
+        this.toggleEdit = this.toggleEdit.bind(this)
+        this.handleChangeTitle = this.handleChangeTitle.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
+        // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
     }
 
-    handleShowImagesChange(e) {
-        this.setState({showImages: e.target.checked});
+    toggleEdit() {
+        this.setState({editing: true})
     }
 
-    handleShowTextChange(e) {
-        this.setState({showText: e.target.checked});
-    }
-
-    handleClickTitle(e) {
-        this.setState({editingTitle: true});
-    }
-
-    handleEditTitle(e) {
-        this.setState({editingTitle: false});
+    handleChangeTitle(e) {
+        if(e.charCode == 13){
+            this.setState({editing: false})
+        }
     }
 
     typeFilter(filter, card) {
@@ -46,28 +40,28 @@ export default class CardList extends Component {
         const { showImages, showText } = this.state
         const showCount = true
 
-        let betterCounter = {}
+        let groupCounter = {}
         list.forEach(card => {
-            betterCounter[card.id] = counter[card.id]
+            groupCounter[card.id] = counter[card.id]
         })
 
-        const total = _.values(betterCounter).reduce((soma, atual) => {
+        const total = _.values(groupCounter).reduce((soma, atual) => {
             return soma + atual
         }, 0)
  
         const cards = list.map((item, index) => {  
             return (
-                <Card 
+                <Card
+                    key={item.id} 
                     data={item}
-                    key={index}
                     onClick={this.props.onCardClick}
                     showImage={showImages}
                     showText={showText}
                     showCount={showCount}
                     count={counter[item.id]}
                 />
-            );
-        });
+            )
+        })
 
         if (title) {
             return (
@@ -84,7 +78,8 @@ export default class CardList extends Component {
     renderTitle(self, name) {
         return (
             <h2
-                onClick={self.handleClickTitle()}
+                key={name}
+                onClick={self.toggleEdit}
             >
                 {name}
             </h2>
@@ -96,19 +91,18 @@ export default class CardList extends Component {
             <input
                 type="text"
                 placeholder={name}
-                onClick={self.handleEditTitle()}
+                onKeyPress={self.handleChangeTitle}
             />
         )
     }
 
     render () {
-        const { data, name, grouped } = this.props
-        const { editingTitle } = this.state
+        const { data, name, grouped, className } = this.props
+        const { editing } = this.state
         const { typeFilter, renderInput, renderTitle } = this
 
-        const total = _.values(data.counter).reduce((soma, atual) => {
-            return soma + atual
-        }, 0)
+        const totalMain = _.values(data.main.counter).reduce((soma, atual) => soma + atual, 0)
+        const totalSide = _.values(data.side.counter).reduce((soma, atual) => soma + atual, 0)
         
         //TODO:
         //Legality / formats
@@ -116,42 +110,43 @@ export default class CardList extends Component {
         //Editions
         //Price
         //Print
-        
-        let cards = []
+            
+        const lands = this.renderGroup(
+            'lands',
+            data.main.list.filter(card => typeFilter('land', card)),
+            data.main.counter
+        )
 
-        if (!grouped) {
-            cards = this.renderAll(data.list, data.counter)
-        } else {
-            const lands = this.renderGroup(
-                'lands',
-                data.list.filter(card => typeFilter('land', card)),
-                data.counter
-            )
+        const creatures = this.renderGroup(
+            'creatures',
+            data.main.list.filter(card => typeFilter('creature', card)),
+            data.main.counter
+        )
 
-            const creatures = this.renderGroup(
-                'creatures',
-                data.list.filter(card => typeFilter('creature', card)),
-                data.counter
-            )
+        const other = this.renderGroup(
+            'spells',
+            data.main.list.filter(card => !typeFilter('land', card) && !typeFilter('creature', card)),
+            data.main.counter
+        )
 
-            const other = this.renderGroup(
-                'other',
-                data.list.filter(card => !typeFilter('land', card) && !typeFilter('creature', card)),
-                data.counter
-            )
+        const side = this.renderGroup(
+            'sideboard',
+            data.side.list,
+            data.side.counter
+        )
 
-            cards = [ lands, creatures, other ]
-        }
-
+        const main = [ lands, creatures, other ]
+    
         return (
-            <div className='list'>
-                {editingTitle ? renderInput(this, name) : renderTitle(this, name)}
+            <div className={classnames('list', className)}>
+                { editing ? renderInput(this, name) : renderTitle(this, name)}
                 
                 <div className='list-header'>
-                    <span className='list-header-total'>{total}</span>
+                    <span className='list-header-total'>{totalMain}</span>
                 </div>
-                {cards}
+                {main}
+                {side}
             </div>
-        );
+        )
     }
 }
