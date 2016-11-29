@@ -21460,7 +21460,15 @@
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _cardSearch = __webpack_require__(181);
+	var _searchList = __webpack_require__(182);
+
+	var _searchList2 = _interopRequireDefault(_searchList);
+
+	var _deckList = __webpack_require__(183);
+
+	var _deckList2 = _interopRequireDefault(_deckList);
+
+	var _cardSearch = __webpack_require__(185);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
@@ -21488,13 +21496,20 @@
 	                counter: {}
 	            },
 	            cards: {
-	                list: [],
-	                counter: {}
+	                main: {
+	                    list: [],
+	                    counter: {}
+	                },
+	                side: {
+	                    list: [],
+	                    counter: {}
+	                }
 	            }
 	        };
 
 	        _this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || _this.state.search;
 	        _this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards')) || _this.state.cards;
+	        _this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks')) || _this.state.decks;
 	        return _this;
 	    }
 
@@ -21512,8 +21527,8 @@
 	    }, {
 	        key: 'handleOnSearchResultClick',
 	        value: function handleOnSearchResultClick(card) {
-	            var list = this.state.cards.list;
-	            var counter = this.state.cards.counter;
+	            var list = this.state.cards.main.list;
+	            var counter = this.state.cards.main.counter;
 
 	            var cards = this.state.cards;
 
@@ -21522,18 +21537,18 @@
 	            }) ? list : [].concat(_toConsumableArray(list), [card]);
 	            counter[card.id] = counter[card.id] ? counter[card.id] += 1 : 1;
 
-	            cards.list = list;
-	            cards.counter = counter;
+	            cards.main.list = list;
+	            cards.main.counter = counter;
 
 	            this.setState({ cards: cards });
 	        }
 	    }, {
 	        key: 'handleOnListClick',
 	        value: function handleOnListClick(card) {
-	            var list = this.state.cards.list.filter(function (x) {
+	            var list = this.state.cards.main.list.filter(function (x) {
 	                return x.id != card.id;
 	            });
-	            var counter = this.state.cards.counter;
+	            var counter = this.state.cards.main.counter;
 
 	            counter[card.id] = list.filter(function (x) {
 	                x.id == card.id;
@@ -21541,8 +21556,8 @@
 
 	            var cards = this.state.cards;
 
-	            cards.list = list;
-	            cards.counter = counter;
+	            cards.main.list = list;
+	            cards.main.counter = counter;
 
 	            this.setState({ cards: cards });
 	        }
@@ -21568,6 +21583,19 @@
 	            // save deck
 	            // collection
 
+	            var _state = this.state;
+	            var search = _state.search;
+	            var cards = _state.cards;
+
+
+	            var decks = [{
+	                name: 'dummy'
+	            }, {
+	                name: 'deck'
+	            }, {
+	                name: 'list'
+	            }];
+
 	            return _react2.default.createElement(
 	                'div',
 	                { id: 'cardbox' },
@@ -21592,16 +21620,23 @@
 	                _react2.default.createElement(
 	                    'section',
 	                    { className: 'lists' },
-	                    _react2.default.createElement(_cardList2.default, { id: 'search-list',
+	                    _react2.default.createElement(_searchList2.default, {
+	                        id: 'search-list',
 	                        name: 'search',
-	                        data: this.state.search,
+	                        className: 'search',
+	                        data: search,
 	                        onCardClick: this.handleOnSearchResultClick.bind(this)
 	                    }),
-	                    _react2.default.createElement(_cardList2.default, { id: 'card-list',
+	                    _react2.default.createElement(_cardList2.default, {
+	                        id: 'card-list',
 	                        name: 'deck',
-	                        data: this.state.cards,
+	                        className: 'deck',
+	                        data: cards,
 	                        onCardClick: this.handleOnListClick.bind(this),
 	                        grouped: true
+	                    }),
+	                    _react2.default.createElement(_deckList2.default, {
+	                        data: decks
 	                    })
 	                )
 	            );
@@ -21629,11 +21664,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _card = __webpack_require__(175);
+	var _classnames = __webpack_require__(175);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _card = __webpack_require__(176);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(179);
+	var _lodash = __webpack_require__(180);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -21654,39 +21693,30 @@
 	        var _this = _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
 
 	        _this.state = {
-	            showImages: false,
-	            editingTitle: false
+	            editing: false
 	        };
 
-	        _this.handleClickTitle = _this.handleClickTitle.bind(_this);
-	        _this.handleEditTitle = _this.handleEditTitle.bind(_this);
+	        _this.toggleEdit = _this.toggleEdit.bind(_this);
+	        _this.handleChangeTitle = _this.handleChangeTitle.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(CardList, [{
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(nextProps) {
-	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`);
+	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
 	        }
 	    }, {
-	        key: 'handleShowImagesChange',
-	        value: function handleShowImagesChange(e) {
-	            this.setState({ showImages: e.target.checked });
+	        key: 'toggleEdit',
+	        value: function toggleEdit() {
+	            this.setState({ editing: true });
 	        }
 	    }, {
-	        key: 'handleShowTextChange',
-	        value: function handleShowTextChange(e) {
-	            this.setState({ showText: e.target.checked });
-	        }
-	    }, {
-	        key: 'handleClickTitle',
-	        value: function handleClickTitle(e) {
-	            this.setState({ editingTitle: true });
-	        }
-	    }, {
-	        key: 'handleEditTitle',
-	        value: function handleEditTitle(e) {
-	            this.setState({ editingTitle: false });
+	        key: 'handleChangeTitle',
+	        value: function handleChangeTitle(e) {
+	            if (e.charCode == 13) {
+	                this.setState({ editing: false });
+	            }
 	        }
 	    }, {
 	        key: 'typeFilter',
@@ -21709,19 +21739,19 @@
 
 	            var showCount = true;
 
-	            var betterCounter = {};
+	            var groupCounter = {};
 	            list.forEach(function (card) {
-	                betterCounter[card.id] = counter[card.id];
+	                groupCounter[card.id] = counter[card.id];
 	            });
 
-	            var total = _lodash2.default.values(betterCounter).reduce(function (soma, atual) {
+	            var total = _lodash2.default.values(groupCounter).reduce(function (soma, atual) {
 	                return soma + atual;
 	            }, 0);
 
 	            var cards = list.map(function (item, index) {
 	                return _react2.default.createElement(_card2.default, {
+	                    key: item.id,
 	                    data: item,
-	                    key: index,
 	                    onClick: _this2.props.onCardClick,
 	                    showImage: showImages,
 	                    showText: showText,
@@ -21755,7 +21785,8 @@
 	            return _react2.default.createElement(
 	                'h2',
 	                {
-	                    onClick: self.handleClickTitle()
+	                    key: name,
+	                    onClick: self.toggleEdit
 	                },
 	                name
 	            );
@@ -21766,7 +21797,7 @@
 	            return _react2.default.createElement('input', {
 	                type: 'text',
 	                placeholder: name,
-	                onClick: self.handleEditTitle()
+	                onKeyPress: self.handleChangeTitle
 	            });
 	        }
 	    }, {
@@ -21776,13 +21807,17 @@
 	            var data = _props.data;
 	            var name = _props.name;
 	            var grouped = _props.grouped;
-	            var editingTitle = this.state.editingTitle;
+	            var className = _props.className;
+	            var editing = this.state.editing;
 	            var typeFilter = this.typeFilter;
 	            var renderInput = this.renderInput;
 	            var renderTitle = this.renderTitle;
 
 
-	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
+	            var totalMain = _lodash2.default.values(data.main.counter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
+	            var totalSide = _lodash2.default.values(data.side.counter).reduce(function (soma, atual) {
 	                return soma + atual;
 	            }, 0);
 
@@ -21793,40 +21828,37 @@
 	            //Price
 	            //Print
 
-	            var cards = [];
+	            var lands = this.renderGroup('lands', data.main.list.filter(function (card) {
+	                return typeFilter('land', card);
+	            }), data.main.counter);
 
-	            if (!grouped) {
-	                cards = this.renderAll(data.list, data.counter);
-	            } else {
-	                var lands = this.renderGroup('lands', data.list.filter(function (card) {
-	                    return typeFilter('land', card);
-	                }), data.counter);
+	            var creatures = this.renderGroup('creatures', data.main.list.filter(function (card) {
+	                return typeFilter('creature', card);
+	            }), data.main.counter);
 
-	                var creatures = this.renderGroup('creatures', data.list.filter(function (card) {
-	                    return typeFilter('creature', card);
-	                }), data.counter);
+	            var other = this.renderGroup('spells', data.main.list.filter(function (card) {
+	                return !typeFilter('land', card) && !typeFilter('creature', card);
+	            }), data.main.counter);
 
-	                var other = this.renderGroup('other', data.list.filter(function (card) {
-	                    return !typeFilter('land', card) && !typeFilter('creature', card);
-	                }), data.counter);
+	            var side = this.renderGroup('sideboard', data.side.list, data.side.counter);
 
-	                cards = [lands, creatures, other];
-	            }
+	            var main = [lands, creatures, other];
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'list' },
-	                editingTitle ? renderInput(this, name) : renderTitle(this, name),
+	                { className: (0, _classnames2.default)('list', className) },
+	                editing ? renderInput(this, name) : renderTitle(this, name),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'list-header' },
 	                    _react2.default.createElement(
 	                        'span',
 	                        { className: 'list-header-total' },
-	                        total
+	                        totalMain
 	                    )
 	                ),
-	                cards
+	                main,
+	                side
 	            );
 	        }
 	    }]);
@@ -21838,6 +21870,60 @@
 
 /***/ },
 /* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21852,11 +21938,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _manaCost = __webpack_require__(176);
+	var _manaCost = __webpack_require__(177);
 
 	var _manaCost2 = _interopRequireDefault(_manaCost);
 
-	var _tooltip = __webpack_require__(177);
+	var _tooltip = __webpack_require__(178);
 
 	var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -21924,7 +22010,6 @@
 	    }, {
 	        key: 'renderImage',
 	        value: function renderImage(data) {
-	            console.log(data);
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'card-image' },
@@ -21968,7 +22053,7 @@
 	exports.default = Card;
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22036,7 +22121,7 @@
 	exports.default = ManaCost;
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22053,7 +22138,7 @@
 
 	var _reactDom = __webpack_require__(35);
 
-	var _renderIntoBody = __webpack_require__(178);
+	var _renderIntoBody = __webpack_require__(179);
 
 	var _renderIntoBody2 = _interopRequireDefault(_renderIntoBody);
 
@@ -22172,7 +22257,7 @@
 	exports.default = Tooltip;
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22246,7 +22331,7 @@
 	exports.default = RenderIntoBody;
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -39145,10 +39230,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(180)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(181)(module)))
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -39164,7 +39249,257 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(175);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _card = __webpack_require__(176);
+
+	var _card2 = _interopRequireDefault(_card);
+
+	var _lodash = __webpack_require__(180);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SearchList = function (_Component) {
+	    _inherits(SearchList, _Component);
+
+	    function SearchList(props) {
+	        _classCallCheck(this, SearchList);
+
+	        var _this = _possibleConstructorReturn(this, (SearchList.__proto__ || Object.getPrototypeOf(SearchList)).call(this, props));
+
+	        _this.state = {};
+	        return _this;
+	    }
+
+	    _createClass(SearchList, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
+	        }
+	    }, {
+	        key: 'typeFilter',
+	        value: function typeFilter(filter, card) {
+	            return card.types.indexOf(filter) != -1;
+	        }
+	    }, {
+	        key: 'renderAll',
+	        value: function renderAll(list) {
+	            var _this2 = this;
+
+	            return list.map(function (item, index) {
+	                return _react2.default.createElement(_card2.default, {
+	                    key: item.id,
+	                    data: item,
+	                    onClick: _this2.props.onCardClick,
+	                    showCount: false
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'renderTitle',
+	        value: function renderTitle(self, name) {
+	            return _react2.default.createElement(
+	                'h2',
+	                null,
+	                name
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props;
+	            var data = _props.data;
+	            var name = _props.name;
+	            var grouped = _props.grouped;
+	            var className = _props.className;
+	            var typeFilter = this.typeFilter;
+	            var renderTitle = this.renderTitle;
+
+
+	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
+
+	            var cards = this.renderAll(data.list, data.counter);
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: (0, _classnames2.default)('list', className) },
+	                renderTitle(this, name),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'list-header' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'list-header-total' },
+	                        total
+	                    )
+	                ),
+	                cards
+	            );
+	        }
+	    }]);
+
+	    return SearchList;
+	}(_react.Component);
+
+	exports.default = SearchList;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _deck = __webpack_require__(184);
+
+	var _deck2 = _interopRequireDefault(_deck);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var DeckList = function (_Component) {
+	    _inherits(DeckList, _Component);
+
+	    function DeckList(props) {
+	        _classCallCheck(this, DeckList);
+
+	        return _possibleConstructorReturn(this, (DeckList.__proto__ || Object.getPrototypeOf(DeckList)).call(this, props));
+	    }
+
+	    _createClass(DeckList, [{
+	        key: 'render',
+	        value: function render() {
+	            var data = this.props.data;
+
+
+	            var decks = data.map(function (item, index) {
+	                return _react2.default.createElement(_deck2.default, {
+	                    key: index,
+	                    data: item
+	                });
+	            });
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'deck-list' },
+	                _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    'decks'
+	                ),
+	                decks
+	            );
+	        }
+	    }]);
+
+	    return DeckList;
+	}(_react.Component);
+
+	exports.default = DeckList;
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Card = function (_Component) {
+	    _inherits(Card, _Component);
+
+	    function Card(props) {
+	        _classCallCheck(this, Card);
+
+	        return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+	    }
+
+	    _createClass(Card, [{
+	        key: "render",
+	        value: function render() {
+	            var data = this.props.data;
+
+
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "deck-wrapper" },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "deck-title" },
+	                    _react2.default.createElement(
+	                        "span",
+	                        null,
+	                        data.name
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Card;
+	}(_react.Component);
+
+	exports.default = Card;
+
+/***/ },
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -39249,7 +39584,7 @@
 
 	            return _react2.default.createElement(
 	                "form",
-	                { className: "search", onSubmit: this.handleSubmit.bind(this) },
+	                { onSubmit: this.handleSubmit.bind(this) },
 	                _react2.default.createElement("input", {
 	                    id: "search",
 	                    type: "text",
