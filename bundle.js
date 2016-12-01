@@ -21490,39 +21490,65 @@
 
 	        var _this = _possibleConstructorReturn(this, (CardBox.__proto__ || Object.getPrototypeOf(CardBox)).call(this, props));
 
-	        _this.state = {
-	            search: {
-	                list: [],
-	                counter: {}
-	            },
-	            cards: {
-	                main: {
-	                    list: [],
-	                    counter: {}
-	                },
-	                side: {
-	                    list: [],
-	                    counter: {}
-	                }
-	            }
-	        };
+	        _this.state = _this.getInitialState();
 
 	        _this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || _this.state.search;
-	        _this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards')) || _this.state.cards;
+	        _this.state.active = JSON.parse(localStorage.getItem('yamtgdb-active')) || _this.state.active;
 	        _this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks')) || _this.state.decks;
+
+	        if (_this.state.active > 0) {
+	            _this.state.cards = _this.state.decks.find(function (deck) {
+	                return deck.id == _this.state.active;
+	            });
+	        }
 	        return _this;
 	    }
 
 	    _createClass(CardBox, [{
+	        key: 'getInitialState',
+	        value: function getInitialState() {
+	            var initialState = {
+	                active: 0,
+	                search: {
+	                    list: [],
+	                    counter: {}
+	                },
+	                cards: {
+	                    id: 0,
+	                    name: '<new>',
+	                    main: {
+	                        list: [],
+	                        counter: {}
+	                    },
+	                    side: {
+	                        list: [],
+	                        counter: {}
+	                    }
+	                },
+	                decks: []
+	            };
+
+	            return initialState;
+	        }
+	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate() {
 	            localStorage.setItem('yamtgdb-search', JSON.stringify(this.state.search));
-	            localStorage.setItem('yamtgdb-cards', JSON.stringify(this.state.cards));
+	            localStorage.setItem('yamtgdb-active', JSON.stringify(this.state.active));
+	            localStorage.setItem('yamtgdb-decks', JSON.stringify(this.state.decks));
 	        }
 	    }, {
 	        key: 'handleOnSearchChange',
 	        value: function handleOnSearchChange(search) {
 	            // console.log(search)
+	        }
+	    }, {
+	        key: 'handleDeckChangeTitle',
+	        value: function handleDeckChangeTitle(name) {
+	            var cards = this.state.cards;
+	            cards.name = name;
+
+	            this.setState({ cards: cards });
 	        }
 	    }, {
 	        key: 'handleOnSearchResultClick',
@@ -21575,26 +21601,36 @@
 	            });
 	        }
 	    }, {
+	        key: 'handleDeckChange',
+	        value: function handleDeckChange(deck) {
+	            this.setState({ active: deck.id, cards: deck });
+	        }
+	    }, {
+	        key: 'handleNewDeck',
+	        value: function handleNewDeck() {
+	            var deck = this.getInitialState().cards;
+	            var decks = this.state.decks;
+
+	            decks.push(deck);
+
+	            deck.id = decks.length;
+
+	            this.setState({ active: deck.id, cards: deck, decks: decks });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            // TODO: 
-	            // deck list
 	            // load decks
 	            // save deck
 	            // collection
+	            // move bindingins to constructor
 
 	            var _state = this.state;
 	            var search = _state.search;
 	            var cards = _state.cards;
+	            var decks = _state.decks;
 
-
-	            var decks = [{
-	                name: 'dummy'
-	            }, {
-	                name: 'deck'
-	            }, {
-	                name: 'list'
-	            }];
 
 	            return _react2.default.createElement(
 	                'div',
@@ -21633,10 +21669,13 @@
 	                        className: 'deck',
 	                        data: cards,
 	                        onCardClick: this.handleOnListClick.bind(this),
+	                        onChangeTitle: this.handleDeckChangeTitle.bind(this),
 	                        grouped: true
 	                    }),
 	                    _react2.default.createElement(_deckList2.default, {
-	                        data: decks
+	                        data: decks,
+	                        onNew: this.handleNewDeck.bind(this),
+	                        onDeckChange: this.handleDeckChange.bind(this)
 	                    })
 	                )
 	            );
@@ -21716,6 +21755,8 @@
 	        value: function handleChangeTitle(e) {
 	            if (e.charCode == 13) {
 	                this.setState({ editing: false });
+
+	                this.props.onChangeTitle(e.target.value);
 	            }
 	        }
 	    }, {
@@ -21782,30 +21823,36 @@
 	    }, {
 	        key: 'renderTitle',
 	        value: function renderTitle(self, name) {
+	            var title = name ? name : '<missingno>';
+
 	            return _react2.default.createElement(
 	                'h2',
 	                {
 	                    key: name,
 	                    onClick: self.toggleEdit
 	                },
-	                name
+	                title
 	            );
 	        }
 	    }, {
 	        key: 'renderInput',
 	        value: function renderInput(self, name) {
-	            return _react2.default.createElement('input', {
-	                type: 'text',
-	                placeholder: name,
-	                onKeyPress: self.handleChangeTitle
-	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'deck-name' },
+	                _react2.default.createElement('input', {
+	                    className: 'deck-name-input',
+	                    type: 'text',
+	                    placeholder: name,
+	                    onKeyPress: self.handleChangeTitle
+	                })
+	            );
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _props = this.props;
 	            var data = _props.data;
-	            var name = _props.name;
 	            var grouped = _props.grouped;
 	            var className = _props.className;
 	            var editing = this.state.editing;
@@ -21847,7 +21894,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: (0, _classnames2.default)('list', className) },
-	                editing ? renderInput(this, name) : renderTitle(this, name),
+	                editing ? renderInput(this, data.name) : renderTitle(this, data.name),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'list-header' },
@@ -39404,19 +39451,30 @@
 	    function DeckList(props) {
 	        _classCallCheck(this, DeckList);
 
-	        return _possibleConstructorReturn(this, (DeckList.__proto__ || Object.getPrototypeOf(DeckList)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (DeckList.__proto__ || Object.getPrototypeOf(DeckList)).call(this, props));
+
+	        _this.handleNew = _this.handleNew.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(DeckList, [{
+	        key: 'handleNew',
+	        value: function handleNew() {
+	            this.props.onNew();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+
 	            var data = this.props.data;
 
 
 	            var decks = data.map(function (item, index) {
 	                return _react2.default.createElement(_deck2.default, {
 	                    key: index,
-	                    data: item
+	                    data: item,
+	                    onClick: _this2.props.onDeckChange
 	                });
 	            });
 
@@ -39428,7 +39486,14 @@
 	                    null,
 	                    'decks'
 	                ),
-	                decks
+	                decks,
+	                _react2.default.createElement(
+	                    'button',
+	                    {
+	                        onClick: this.handleNew
+	                    },
+	                    'new'
+	                )
 	            );
 	        }
 	    }]);
@@ -39468,10 +39533,21 @@
 	    function Card(props) {
 	        _classCallCheck(this, Card);
 
-	        return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).call(this, props));
+
+	        _this.handleClick = _this.handleClick.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(Card, [{
+	        key: "handleClick",
+	        value: function handleClick() {
+	            var data = this.props.data;
+
+
+	            this.props.onClick(data);
+	        }
+	    }, {
 	        key: "render",
 	        value: function render() {
 	            var data = this.props.data;
@@ -39485,7 +39561,9 @@
 	                    { className: "deck-title" },
 	                    _react2.default.createElement(
 	                        "span",
-	                        null,
+	                        {
+	                            onClick: this.handleClick
+	                        },
 	                        data.name
 	                    )
 	                )

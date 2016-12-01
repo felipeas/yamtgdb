@@ -12,17 +12,14 @@ body {
 }
 
 .search {
-    background-color: sienna;
     flex: 1 25%;
 }
 
 .deck {
-    background-color: cadetblue;
     flex: 1 50%;
 }
 
 .deck-list {
-    background-color: indianred;
     flex: 1 25%;
 }
 
@@ -34,6 +31,17 @@ body {
 .list {
     width: 100%;
 } 
+
+.deck-name {
+    padding-top: 20px;
+    padding-bottom: 15px;
+    line-height: 3
+}
+
+.deck-name-input {
+    font-size: 24;
+}
+
 
 .list-header {
     padding: 5px;
@@ -73,6 +81,12 @@ body {
 
 .card-wrapper {
     padding: 5px;
+    display: flex;
+    /*border: solid 1px blue;*/
+}
+
+.card-wrapper:hover {
+    background-color: #cacaca;
     display: flex;
     /*border: solid 1px blue;*/
 }
