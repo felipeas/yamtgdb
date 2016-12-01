@@ -8,12 +8,27 @@ export default class CardBox extends Component {
     constructor (props) {
         super(props)
 
-        this.state = {
+        this.state = this.getInitialState()
+        
+        this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || this.state.search
+        this.state.active = JSON.parse(localStorage.getItem('yamtgdb-active'))  || this.state.active
+        this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks'))  || this.state.decks
+
+        if (this.state.active > 0) {
+            this.state.cards = this.state.decks.find(deck => deck.id == this.state.active);
+        }
+    }
+
+    getInitialState() {
+        const initialState = {
+            active: 0,
             search: {
                 list : [],
                 counter : {}
             },
             cards: {
+                id: 0,
+                name: '<new>',
                 main: {
                     list : [],
                     counter : {}
@@ -22,22 +37,29 @@ export default class CardBox extends Component {
                     list : [],
                     counter : {}
                 }
-            }
-        }
-        
-        this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || this.state.search
-        this.state.cards = JSON.parse(localStorage.getItem('yamtgdb-cards'))  || this.state.cards
-        this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks'))  || this.state.decks
+            },
+            decks: []
+        } 
+
+        return initialState;
     }
 
     componentDidUpdate () {
         localStorage.setItem('yamtgdb-search', JSON.stringify(this.state.search))
-        localStorage.setItem('yamtgdb-cards', JSON.stringify(this.state.cards))
+        localStorage.setItem('yamtgdb-active', JSON.stringify(this.state.active))
+        localStorage.setItem('yamtgdb-decks', JSON.stringify(this.state.decks))
     }
 
     handleOnSearchChange (search) {
         // console.log(search)
     }   
+
+    handleDeckChangeTitle (name) {
+        const cards = this.state.cards
+        cards.name = name
+
+        this.setState({ cards })
+    }
 
     handleOnSearchResultClick(card) {
         let list = this.state.cards.main.list
@@ -80,26 +102,29 @@ export default class CardBox extends Component {
         })   
     }
 
+    handleDeckChange (deck) {
+        this.setState({ active: deck.id, cards: deck })
+    }
+
+    handleNewDeck () {
+        const deck = this.getInitialState().cards
+        const decks = this.state.decks
+
+        decks.push(deck);
+
+        deck.id = decks.length;
+
+        this.setState({ active: deck.id, cards: deck, decks })
+    }
+
     render () {
         // TODO: 
-        // deck list
         // load decks
         // save deck
         // collection
+        // move bindingins to constructor
 
-        const { search, cards } = this.state
-
-        const decks = [
-            {
-                name: 'dummy'
-            },
-            {
-                name: 'deck'
-            },
-            {
-                name: 'list'
-            }
-        ]
+        const { search, cards, decks } = this.state
 
         return (
             <div id='cardbox'>
@@ -125,10 +150,13 @@ export default class CardBox extends Component {
                         className='deck'
                         data={cards}
                         onCardClick={this.handleOnListClick.bind(this)}
+                        onChangeTitle={this.handleDeckChangeTitle.bind(this)}
                         grouped
                     />
                     <DeckList
                         data={decks}
+                        onNew={this.handleNewDeck.bind(this)}
+                        onDeckChange={this.handleDeckChange.bind(this)}
                     />
                 </section>
             </div>

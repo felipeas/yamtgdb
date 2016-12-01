@@ -21,10 +21,12 @@ export default class CardList extends Component {
     toggleEdit() {
         this.setState({editing: true})
     }
-
+    
     handleChangeTitle(e) {
         if(e.charCode == 13){
             this.setState({editing: false})
+            
+            this.props.onChangeTitle(e.target.value);
         }
     }
 
@@ -76,28 +78,33 @@ export default class CardList extends Component {
     }
 
     renderTitle(self, name) {
+        const title = name ? name : '<missingno>'
+
         return (
             <h2
                 key={name}
                 onClick={self.toggleEdit}
             >
-                {name}
+                {title}
             </h2>
         )
     }
 
     renderInput(self, name) {
          return (
-            <input
-                type="text"
-                placeholder={name}
-                onKeyPress={self.handleChangeTitle}
-            />
+            <div className='deck-name'>
+                <input
+                    className='deck-name-input'
+                    type="text"
+                    placeholder={name}
+                    onKeyPress={self.handleChangeTitle}
+                />
+            </div>
         )
     }
 
     render () {
-        const { data, name, grouped, className } = this.props
+        const { data, grouped, className } = this.props
         const { editing } = this.state
         const { typeFilter, renderInput, renderTitle } = this
 
@@ -139,8 +146,7 @@ export default class CardList extends Component {
     
         return (
             <div className={classnames('list', className)}>
-                { editing ? renderInput(this, name) : renderTitle(this, name)}
-                
+                { editing ? renderInput(this, data.name) : renderTitle(this, data.name)}
                 <div className='list-header'>
                     <span className='list-header-total'>{totalMain}</span>
                 </div>

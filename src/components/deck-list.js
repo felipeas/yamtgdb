@@ -4,6 +4,12 @@ import Deck from './deck'
 export default class DeckList extends Component {
     constructor (props) {
         super(props)
+
+        this.handleNew = this.handleNew.bind(this)
+    }
+
+    handleNew(){
+        this.props.onNew();
     }
 
     render () {
@@ -14,6 +20,7 @@ export default class DeckList extends Component {
                 <Deck 
                     key={index}
                     data={item}
+                    onClick={this.props.onDeckChange}
                 />
             )
         })
@@ -22,6 +29,11 @@ export default class DeckList extends Component {
             <div className='deck-list'>
                 <h2>decks</h2>
                 {decks}
+                <button
+                    onClick={this.handleNew}    
+                >
+                    new
+                </button>
             </div>
         )
     }
