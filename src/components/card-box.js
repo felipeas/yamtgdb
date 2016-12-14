@@ -17,6 +17,8 @@ export default class CardBox extends Component {
         if (this.state.active > 0) {
             this.state.cards = this.state.decks.find(deck => deck.id == this.state.active);
         }
+
+        this.handleOnSearchSubmit = this.handleOnSearchSubmit.bind(this)
     }
 
     getInitialState() {
@@ -28,7 +30,7 @@ export default class CardBox extends Component {
             },
             cards: {
                 id: 0,
-                name: '<new>',
+                name: '<missingNO>',
                 main: {
                     list : [],
                     counter : {}
@@ -55,10 +57,17 @@ export default class CardBox extends Component {
     }   
 
     handleDeckChangeTitle (name) {
-        const cards = this.state.cards
-        cards.name = name
+        const deck = this.state.cards
+        const decks = this.state.decks
 
-        this.setState({ cards })
+        deck.name = name
+
+        if (deck.id == 0) {
+            decks.push(deck);
+            deck.id = decks.length;
+        }
+
+        this.setState({ active: deck.id, cards: deck, decks })
     }
 
     handleOnSearchResultClick(card) {
@@ -90,6 +99,28 @@ export default class CardBox extends Component {
         this.setState({ cards })     
     }
 
+    handleOnListDoubleClick(card) {
+        let side = this.state.cards.side.list
+        const counterSide = this.state.cards.side.counter
+
+        const list = this.state.cards.main.list.filter((x) => x.id != card.id)
+        const counterMain = this.state.cards.main.counter
+        
+        side = side.find(x => x.id == card.id) ? side : [ ...side, card ]
+
+        counterSide[card.id] = counterSide[card.id] ? counterSide[card.id] += counterMain[card.id] : counterMain[card.id]
+        counterMain[card.id] = list.filter((x) => {x.id == card.id}).length
+
+        const cards = this.state.cards
+
+        cards.main.list = list
+        cards.main.counter = counterMain 
+        cards.side.list = side
+        cards.side.counter = counterSide
+
+        this.setState({ cards })     
+    }
+
     handleOnSearchSubmit (search) {
         this.setState({ 
             search: { 
@@ -111,7 +142,6 @@ export default class CardBox extends Component {
         const decks = this.state.decks
 
         decks.push(deck);
-
         deck.id = decks.length;
 
         this.setState({ active: deck.id, cards: deck, decks })
@@ -134,7 +164,7 @@ export default class CardBox extends Component {
                 </div>
                 <CardSearch 
                     onChange={this.handleOnSearchChange.bind(this)}
-                    onSubmit={this.handleOnSearchSubmit.bind(this)}
+                    onSubmit={this.handleOnSearchSubmit}
                 />
                 <section className='lists'>
                     <SearchList 
@@ -150,6 +180,7 @@ export default class CardBox extends Component {
                         className='deck'
                         data={cards}
                         onCardClick={this.handleOnListClick.bind(this)}
+                        onCardDoubleClick={this.handleOnListDoubleClick.bind(this)}
                         onChangeTitle={this.handleDeckChangeTitle.bind(this)}
                         grouped
                     />

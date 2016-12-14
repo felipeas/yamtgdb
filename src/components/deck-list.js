@@ -29,11 +29,11 @@ export default class DeckList extends Component {
             <div className='deck-list'>
                 <h2>decks</h2>
                 {decks}
-                <button
+                <a
                     onClick={this.handleNew}    
                 >
-                    new
-                </button>
+                    >new
+                </a>
             </div>
         )
     }

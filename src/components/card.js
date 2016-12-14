@@ -12,6 +12,11 @@ export default class Card extends Component {
         this.props.onClick(card)
     }
 
+    handleDoubleClick() {
+        const card = this.props.data
+        this.props.onDoubleClick(card)
+    }
+
     render () {
         const { data, count }= this.props
         const { showImage, showText, showCount }  = this.props
@@ -23,7 +28,11 @@ export default class Card extends Component {
                 element={this.renderImage(data)}
                 place='top'
             >
-                <div className="card-wrapper" onClick={this.handleClick.bind(this)}>
+                <div 
+                    className="card-wrapper" 
+                    onClick={this.handleClick.bind(this)}
+                    onDoubleClick={this.handleDoubleClick.bind(this)}
+                >
                     <div className="card-title">
                         <span>{data.name}</span>
                     </div>

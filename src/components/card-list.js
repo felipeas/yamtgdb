@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
+import { findDOMNode } from 'react-dom';
 import classnames from 'classnames'
 import Card from './card'
 import _ from 'lodash'
+
+const delay = 200;
+let timer = 0;
+let prevent = false;
 
 export default class CardList extends Component {
     constructor (props) {
@@ -12,10 +17,16 @@ export default class CardList extends Component {
 
         this.toggleEdit = this.toggleEdit.bind(this)
         this.handleChangeTitle = this.handleChangeTitle.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.handleDoubleClick = this.handleDoubleClick.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
         // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        nextState.editing ? findDOMNode(this.refs.name).focus() : null
     }
 
     toggleEdit() {
@@ -28,6 +39,23 @@ export default class CardList extends Component {
             
             this.props.onChangeTitle(e.target.value);
         }
+    }
+
+    handleDoubleClick (card) {
+        clearTimeout(timer);
+        prevent = true;
+                    
+        this.props.onCardDoubleClick(card)
+    }
+
+    handleClick (card) {        
+        timer = setTimeout(() => {
+            if (!prevent) {
+                this.props.onCardClick(card)
+            }
+            
+            prevent = false;
+        }, delay);
     }
 
     typeFilter(filter, card) {
@@ -43,6 +71,7 @@ export default class CardList extends Component {
         const showCount = true
 
         let groupCounter = {}
+
         list.forEach(card => {
             groupCounter[card.id] = counter[card.id]
         })
@@ -56,7 +85,8 @@ export default class CardList extends Component {
                 <Card
                     key={item.id} 
                     data={item}
-                    onClick={this.props.onCardClick}
+                    onClick={this.handleClick}
+                    onDoubleClick={this.handleDoubleClick}
                     showImage={showImages}
                     showText={showText}
                     showCount={showCount}
@@ -74,11 +104,12 @@ export default class CardList extends Component {
                 </div>
             )
         }
+
         return cards
     }
 
     renderTitle(self, name) {
-        const title = name ? name : '<missingno>'
+        const title = name ? name : '<missingNO>'
 
         return (
             <h2
@@ -94,6 +125,7 @@ export default class CardList extends Component {
          return (
             <div className='deck-name'>
                 <input
+                    ref='name' 
                     className='deck-name-input'
                     type="text"
                     placeholder={name}

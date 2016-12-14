@@ -50,7 +50,9 @@ export default class CardSearch extends Component {
         return (
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <input
+                    autoFocus
                     id="search"
+                    ref="search"
                     type="text"
                     placeholder="search"
                     onChange={this.handleChange.bind(this)}
