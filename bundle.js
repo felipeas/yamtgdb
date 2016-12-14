@@ -21501,6 +21501,8 @@
 	                return deck.id == _this.state.active;
 	            });
 	        }
+
+	        _this.handleOnSearchSubmit = _this.handleOnSearchSubmit.bind(_this);
 	        return _this;
 	    }
 
@@ -21515,7 +21517,7 @@
 	                },
 	                cards: {
 	                    id: 0,
-	                    name: '<new>',
+	                    name: '<missingNO>',
 	                    main: {
 	                        list: [],
 	                        counter: {}
@@ -21545,10 +21547,17 @@
 	    }, {
 	        key: 'handleDeckChangeTitle',
 	        value: function handleDeckChangeTitle(name) {
-	            var cards = this.state.cards;
-	            cards.name = name;
+	            var deck = this.state.cards;
+	            var decks = this.state.decks;
 
-	            this.setState({ cards: cards });
+	            deck.name = name;
+
+	            if (deck.id == 0) {
+	                decks.push(deck);
+	                deck.id = decks.length;
+	            }
+
+	            this.setState({ active: deck.id, cards: deck, decks: decks });
 	        }
 	    }, {
 	        key: 'handleOnSearchResultClick',
@@ -21588,6 +21597,35 @@
 	            this.setState({ cards: cards });
 	        }
 	    }, {
+	        key: 'handleOnListDoubleClick',
+	        value: function handleOnListDoubleClick(card) {
+	            var side = this.state.cards.side.list;
+	            var counterSide = this.state.cards.side.counter;
+
+	            var list = this.state.cards.main.list.filter(function (x) {
+	                return x.id != card.id;
+	            });
+	            var counterMain = this.state.cards.main.counter;
+
+	            side = side.find(function (x) {
+	                return x.id == card.id;
+	            }) ? side : [].concat(_toConsumableArray(side), [card]);
+
+	            counterSide[card.id] = counterSide[card.id] ? counterSide[card.id] += counterMain[card.id] : counterMain[card.id];
+	            counterMain[card.id] = list.filter(function (x) {
+	                x.id == card.id;
+	            }).length;
+
+	            var cards = this.state.cards;
+
+	            cards.main.list = list;
+	            cards.main.counter = counterMain;
+	            cards.side.list = side;
+	            cards.side.counter = counterSide;
+
+	            this.setState({ cards: cards });
+	        }
+	    }, {
 	        key: 'handleOnSearchSubmit',
 	        value: function handleOnSearchSubmit(search) {
 	            this.setState({
@@ -21612,7 +21650,6 @@
 	            var decks = this.state.decks;
 
 	            decks.push(deck);
-
 	            deck.id = decks.length;
 
 	            this.setState({ active: deck.id, cards: deck, decks: decks });
@@ -21651,7 +21688,7 @@
 	                ),
 	                _react2.default.createElement(_cardSearch2.default, {
 	                    onChange: this.handleOnSearchChange.bind(this),
-	                    onSubmit: this.handleOnSearchSubmit.bind(this)
+	                    onSubmit: this.handleOnSearchSubmit
 	                }),
 	                _react2.default.createElement(
 	                    'section',
@@ -21669,6 +21706,7 @@
 	                        className: 'deck',
 	                        data: cards,
 	                        onCardClick: this.handleOnListClick.bind(this),
+	                        onCardDoubleClick: this.handleOnListDoubleClick.bind(this),
 	                        onChangeTitle: this.handleDeckChangeTitle.bind(this),
 	                        grouped: true
 	                    }),
@@ -21703,6 +21741,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(35);
+
 	var _classnames = __webpack_require__(175);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
@@ -21723,6 +21763,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var delay = 200;
+	var timer = 0;
+	var prevent = false;
+
 	var CardList = function (_Component) {
 	    _inherits(CardList, _Component);
 
@@ -21737,6 +21781,8 @@
 
 	        _this.toggleEdit = _this.toggleEdit.bind(_this);
 	        _this.handleChangeTitle = _this.handleChangeTitle.bind(_this);
+	        _this.handleClick = _this.handleClick.bind(_this);
+	        _this.handleDoubleClick = _this.handleDoubleClick.bind(_this);
 	        return _this;
 	    }
 
@@ -21744,6 +21790,11 @@
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(nextProps) {
 	            // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
+	        }
+	    }, {
+	        key: 'componentWillUpdate',
+	        value: function componentWillUpdate(nextProps, nextState) {
+	            nextState.editing ? (0, _reactDom.findDOMNode)(this.refs.name).focus() : null;
 	        }
 	    }, {
 	        key: 'toggleEdit',
@@ -21760,6 +21811,27 @@
 	            }
 	        }
 	    }, {
+	        key: 'handleDoubleClick',
+	        value: function handleDoubleClick(card) {
+	            clearTimeout(timer);
+	            prevent = true;
+
+	            this.props.onCardDoubleClick(card);
+	        }
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick(card) {
+	            var _this2 = this;
+
+	            timer = setTimeout(function () {
+	                if (!prevent) {
+	                    _this2.props.onCardClick(card);
+	                }
+
+	                prevent = false;
+	            }, delay);
+	        }
+	    }, {
 	        key: 'typeFilter',
 	        value: function typeFilter(filter, card) {
 	            return card.types.indexOf(filter) != -1;
@@ -21772,7 +21844,7 @@
 	    }, {
 	        key: 'renderGroup',
 	        value: function renderGroup(title, list, counter) {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            var _state = this.state;
 	            var showImages = _state.showImages;
@@ -21781,6 +21853,7 @@
 	            var showCount = true;
 
 	            var groupCounter = {};
+
 	            list.forEach(function (card) {
 	                groupCounter[card.id] = counter[card.id];
 	            });
@@ -21793,7 +21866,8 @@
 	                return _react2.default.createElement(_card2.default, {
 	                    key: item.id,
 	                    data: item,
-	                    onClick: _this2.props.onCardClick,
+	                    onClick: _this3.handleClick,
+	                    onDoubleClick: _this3.handleDoubleClick,
 	                    showImage: showImages,
 	                    showText: showText,
 	                    showCount: showCount,
@@ -21818,12 +21892,13 @@
 	                    cards
 	                );
 	            }
+
 	            return cards;
 	        }
 	    }, {
 	        key: 'renderTitle',
 	        value: function renderTitle(self, name) {
-	            var title = name ? name : '<missingno>';
+	            var title = name ? name : '<missingNO>';
 
 	            return _react2.default.createElement(
 	                'h2',
@@ -21841,6 +21916,7 @@
 	                'div',
 	                { className: 'deck-name' },
 	                _react2.default.createElement('input', {
+	                    ref: 'name',
 	                    className: 'deck-name-input',
 	                    type: 'text',
 	                    placeholder: name,
@@ -22017,6 +22093,12 @@
 	            this.props.onClick(card);
 	        }
 	    }, {
+	        key: 'handleDoubleClick',
+	        value: function handleDoubleClick() {
+	            var card = this.props.data;
+	            this.props.onDoubleClick(card);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _props = this.props;
@@ -22038,7 +22120,11 @@
 	                },
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'card-wrapper', onClick: this.handleClick.bind(this) },
+	                    {
+	                        className: 'card-wrapper',
+	                        onClick: this.handleClick.bind(this),
+	                        onDoubleClick: this.handleDoubleClick.bind(this)
+	                    },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'card-title' },
@@ -39488,11 +39574,11 @@
 	                ),
 	                decks,
 	                _react2.default.createElement(
-	                    'button',
+	                    'a',
 	                    {
 	                        onClick: this.handleNew
 	                    },
-	                    'new'
+	                    '>new'
 	                )
 	            );
 	        }
@@ -39664,7 +39750,9 @@
 	                "form",
 	                { onSubmit: this.handleSubmit.bind(this) },
 	                _react2.default.createElement("input", {
+	                    autoFocus: true,
 	                    id: "search",
+	                    ref: "search",
 	                    type: "text",
 	                    placeholder: "search",
 	                    onChange: this.handleChange.bind(this)
