@@ -25,8 +25,8 @@ export default class CardList extends Component {
         // console.log(`carlistReceiveProps: ${JSON.stringify(nextProps, null, 2)}`)
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        nextState.editing ? findDOMNode(this.refs.name).focus() : null
+    componentDidUpdate(prevProps, prevState) {
+        this.state.editing ? findDOMNode(this.refs.name).focus() : null
     }
 
     toggleEdit() {
@@ -36,8 +36,11 @@ export default class CardList extends Component {
     handleChangeTitle(e) {
         if(e.charCode == 13){
             this.setState({editing: false})
+            if(e.target.value != '' ) {
+                this.props.onChangeTitle(e.target.value);
+            }
+
             
-            this.props.onChangeTitle(e.target.value);
         }
     }
 
