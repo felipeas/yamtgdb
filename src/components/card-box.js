@@ -85,7 +85,7 @@ export default class CardBox extends Component {
         this.setState({ cards })        
     }
 
-    handleOnListClick(card) {
+    handleOnDeckCardClick(card) {
         const list = this.state.cards.main.list.filter((x) => x.id != card.id)
         const counter = this.state.cards.main.counter
         
@@ -99,26 +99,63 @@ export default class CardBox extends Component {
         this.setState({ cards })     
     }
 
-    handleOnListDoubleClick(card) {
-        let side = this.state.cards.side.list
-        const counterSide = this.state.cards.side.counter
+    swapGroup(card, origin, destination) {
+        //Remove da origem
+        origin.list = origin.list.filter((x) => x.id != card.id)
 
-        const list = this.state.cards.main.list.filter((x) => x.id != card.id)
-        const counterMain = this.state.cards.main.counter
+        //Guarda quantidade
+        const amount = origin.counter[card.id]
+
+        //Adiciona no destino
+        destination.list = destination.list.find(x => x.id == card.id) ? destination.list : [ ...destination.list, card ]
+
+        //Remove contador
+        origin.counter[card.id] = origin.list.filter((x) => {x.id == card.id})
+
+        //Atualiza contador destino
+        destination.counter[card.id] = destination.counter[card.id] ? destination.counter[card.id] += amount : amount
+    }
+
+    handleOnListDoubleClick(card, isFromSide) {
+        let mainboard = this.state.cards.main            
+        let sideboard = this.state.cards.side            
         
-        side = side.find(x => x.id == card.id) ? side : [ ...side, card ]
-
-        counterSide[card.id] = counterSide[card.id] ? counterSide[card.id] += counterMain[card.id] : counterMain[card.id]
-        counterMain[card.id] = list.filter((x) => {x.id == card.id}).length
+        if (!isFromSide) 
+        {
+            this.swapGroup(card, mainboard, sideboard)
+        }
+        else 
+        {
+            this.swapGroup(card, sideboard, mainboard)
+        }
 
         const cards = this.state.cards
+        cards.main = mainboard
+        cards.side = sideboard
 
-        cards.main.list = list
-        cards.main.counter = counterMain 
-        cards.side.list = side
-        cards.side.counter = counterSide
+        this.setState({ cards })
+    }
 
-        this.setState({ cards })     
+    handleContextMenuClick(card, isFromSide) {
+        let mainboard = this.state.cards.main            
+        let sideboard = this.state.cards.side            
+        
+        if (!isFromSide) 
+        {
+            mainboard.list = mainboard.list.filter((x) => x.id != card.id)
+            delete mainboard.counter[card.id]
+        }
+        else 
+        {
+            sideboard.list = sideboard.list.filter((x) => x.id != card.id)
+            delete sideboard.counter[card.id]
+        }
+
+        const cards = this.state.cards
+        cards.main = mainboard
+        cards.side = sideboard
+
+        this.setState({ cards })
     }
 
     handleOnSearchSubmit (search) {
@@ -179,8 +216,9 @@ export default class CardBox extends Component {
                         name='deck'
                         className='deck'
                         data={cards}
-                        onCardClick={this.handleOnListClick.bind(this)}
+                        onCardClick={this.handleOnDeckCardClick.bind(this)}
                         onCardDoubleClick={this.handleOnListDoubleClick.bind(this)}
+                        onCardContextMenu={this.handleContextMenuClick.bind(this)}
                         onChangeTitle={this.handleDeckChangeTitle.bind(this)}
                         grouped
                     />

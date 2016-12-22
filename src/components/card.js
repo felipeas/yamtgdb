@@ -14,8 +14,20 @@ export default class Card extends Component {
 
     handleDoubleClick() {
         const card = this.props.data
-        this.props.onDoubleClick(card)
+        const isSide = this.props.isSide
+
+        if (this.props.onDoubleClick){
+            this.props.onDoubleClick(card, isSide)
+        }
     }
+
+    handleContextMenu(e) {
+        e.preventDefault()
+        const card = this.props.data
+        const isSide = this.props.isSide
+
+        this.props.onContextMenu(card, isSide)
+    }   
 
     render () {
         const { data, count }= this.props
@@ -32,6 +44,7 @@ export default class Card extends Component {
                     className="card-wrapper" 
                     onClick={this.handleClick.bind(this)}
                     onDoubleClick={this.handleDoubleClick.bind(this)}
+                    onContextMenu={this.handleContextMenu.bind(this)}
                 >
                     <div className="card-title">
                         <span>{data.name}</span>

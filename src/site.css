@@ -73,6 +73,12 @@ body {
     /*border: solid 1px blue;*/
 }
 
+.deck-wrapper:hover {
+    background-color: #cacaca;
+    display: flex;
+    /*border: solid 1px blue;*/
+}
+
 .deck-title {
     flex: 1 100%;
     order: 1;

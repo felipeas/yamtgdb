@@ -19,6 +19,7 @@ export default class CardList extends Component {
         this.handleChangeTitle = this.handleChangeTitle.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.handleDoubleClick = this.handleDoubleClick.bind(this)
+        this.handleBlur = this.handleBlur.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -39,16 +40,19 @@ export default class CardList extends Component {
             if(e.target.value != '' ) {
                 this.props.onChangeTitle(e.target.value);
             }
-
-            
         }
     }
 
-    handleDoubleClick (card) {
+    handleBlur() {
+        this.setState({editing: false})
+    }
+
+//TODO: Move this shit to card Component
+    handleDoubleClick (card, isSide) {
         clearTimeout(timer);
         prevent = true;
                     
-        this.props.onCardDoubleClick(card)
+        this.props.onCardDoubleClick(card, isSide)
     }
 
     handleClick (card) {        
@@ -88,8 +92,10 @@ export default class CardList extends Component {
                 <Card
                     key={item.id} 
                     data={item}
+                    isSide={title == 'sideboard'}
                     onClick={this.handleClick}
                     onDoubleClick={this.handleDoubleClick}
+                    onContextMenu={this.props.onCardContextMenu}
                     showImage={showImages}
                     showText={showText}
                     showCount={showCount}
@@ -133,6 +139,7 @@ export default class CardList extends Component {
                     type="text"
                     placeholder={name}
                     onKeyPress={self.handleChangeTitle}
+                    onBlur={self.handleBlur}
                 />
             </div>
         )
@@ -150,7 +157,7 @@ export default class CardList extends Component {
         //Legality / formats
         //Mana curve
         //Editions
-        //Price
+        //Price / Ligamagic Price??
         //Print
             
         const lands = this.renderGroup(
