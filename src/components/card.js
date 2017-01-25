@@ -9,7 +9,9 @@ export default class Card extends Component {
 
     handleClick() {
         const card = this.props.data
-        this.props.onClick(card)
+        const isSide = this.props.isSide
+
+        this.props.onClick(card, isSide)
     }
 
     handleDoubleClick() {

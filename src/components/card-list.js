@@ -11,10 +11,8 @@ let prevent = false;
 export default class CardList extends Component {
     constructor (props) {
         super(props)
-        this.state = {
-            editing: false
-        }
-
+        this.state = { editing: false }
+    
         this.toggleEdit = this.toggleEdit.bind(this)
         this.handleChangeTitle = this.handleChangeTitle.bind(this)
         this.handleClick = this.handleClick.bind(this)
@@ -31,12 +29,12 @@ export default class CardList extends Component {
     }
 
     toggleEdit() {
-        this.setState({editing: true})
+        this.setState({ editing: true })
     }
     
     handleChangeTitle(e) {
         if(e.charCode == 13){
-            this.setState({editing: false})
+            this.setState({ editing: false })
             if(e.target.value != '' ) {
                 this.props.onChangeTitle(e.target.value);
             }
@@ -44,10 +42,10 @@ export default class CardList extends Component {
     }
 
     handleBlur() {
-        this.setState({editing: false})
+        this.setState({ editing: false })
     }
 
-//TODO: Move this shit to card Component
+    //TODO: Move this shit to card Component
     handleDoubleClick (card, isSide) {
         clearTimeout(timer);
         prevent = true;
@@ -55,10 +53,10 @@ export default class CardList extends Component {
         this.props.onCardDoubleClick(card, isSide)
     }
 
-    handleClick (card) {        
+    handleClick (card, isSide) {        
         timer = setTimeout(() => {
             if (!prevent) {
-                this.props.onCardClick(card)
+                this.props.onCardClick(card, isSide)
             }
             
             prevent = false;
