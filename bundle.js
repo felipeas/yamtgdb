@@ -21575,7 +21575,25 @@
 	        }
 	    }, {
 	        key: 'handleOnDeckCardClick',
-	        value: function handleOnDeckCardClick(card) {
+	        value: function handleOnDeckCardClick(card, isFromSide) {
+	            var mainboard = this.state.cards.main;
+	            var sideboard = this.state.cards.side;
+
+	            if (!isFromSide) {
+	                this.swapGroup(card, mainboard, sideboard);
+	            } else {
+	                this.swapGroup(card, sideboard, mainboard);
+	            }
+
+	            var cards = this.state.cards;
+	            cards.main = mainboard;
+	            cards.side = sideboard;
+
+	            this.setState({ cards: cards });
+	        }
+	    }, {
+	        key: 'removeCardFromDeck',
+	        value: function removeCardFromDeck(card) {
 	            var list = this.state.cards.main.list.filter(function (x) {
 	                return x.id != card.id;
 	            });
@@ -21595,44 +21613,31 @@
 	    }, {
 	        key: 'swapGroup',
 	        value: function swapGroup(card, origin, destination) {
-	            //Remove da origem
+	            //take from origin
 	            origin.list = origin.list.filter(function (x) {
 	                return x.id != card.id;
 	            });
 
-	            //Guarda quantidade
+	            //store amount
 	            var amount = origin.counter[card.id];
 
-	            //Adiciona no destino
+	            //move to destiny
 	            destination.list = destination.list.find(function (x) {
 	                return x.id == card.id;
 	            }) ? destination.list : [].concat(_toConsumableArray(destination.list), [card]);
 
-	            //Remove contador
+	            //change counters
 	            origin.counter[card.id] = origin.list.filter(function (x) {
 	                x.id == card.id;
-	            });
+	            }).length;
 
-	            //Atualiza contador destino
+	            //update destination
 	            destination.counter[card.id] = destination.counter[card.id] ? destination.counter[card.id] += amount : amount;
 	        }
 	    }, {
-	        key: 'handleOnListDoubleClick',
-	        value: function handleOnListDoubleClick(card, isFromSide) {
-	            var mainboard = this.state.cards.main;
-	            var sideboard = this.state.cards.side;
-
-	            if (!isFromSide) {
-	                this.swapGroup(card, mainboard, sideboard);
-	            } else {
-	                this.swapGroup(card, sideboard, mainboard);
-	            }
-
-	            var cards = this.state.cards;
-	            cards.main = mainboard;
-	            cards.side = sideboard;
-
-	            this.setState({ cards: cards });
+	        key: 'handleOnDeckDoubleCardClick',
+	        value: function handleOnDeckDoubleCardClick(card, isFromSide) {
+	            this.removeCardFromDeck(card);
 	        }
 	    }, {
 	        key: 'handleContextMenuClick',
@@ -21739,7 +21744,7 @@
 	                        className: 'deck',
 	                        data: cards,
 	                        onCardClick: this.handleOnDeckCardClick.bind(this),
-	                        onCardDoubleClick: this.handleOnListDoubleClick.bind(this),
+	                        onCardDoubleClick: this.handleOnDeckDoubleCardClick.bind(this),
 	                        onCardContextMenu: this.handleContextMenuClick.bind(this),
 	                        onChangeTitle: this.handleDeckChangeTitle.bind(this),
 	                        grouped: true
@@ -21809,9 +21814,7 @@
 
 	        var _this = _possibleConstructorReturn(this, (CardList.__proto__ || Object.getPrototypeOf(CardList)).call(this, props));
 
-	        _this.state = {
-	            editing: false
-	        };
+	        _this.state = { editing: false };
 
 	        _this.toggleEdit = _this.toggleEdit.bind(_this);
 	        _this.handleChangeTitle = _this.handleChangeTitle.bind(_this);
@@ -21864,12 +21867,12 @@
 	        }
 	    }, {
 	        key: 'handleClick',
-	        value: function handleClick(card) {
+	        value: function handleClick(card, isSide) {
 	            var _this2 = this;
 
 	            timer = setTimeout(function () {
 	                if (!prevent) {
-	                    _this2.props.onCardClick(card);
+	                    _this2.props.onCardClick(card, isSide);
 	                }
 
 	                prevent = false;
@@ -22137,7 +22140,9 @@
 	        key: 'handleClick',
 	        value: function handleClick() {
 	            var card = this.props.data;
-	            this.props.onClick(card);
+	            var isSide = this.props.isSide;
+
+	            this.props.onClick(card, isSide);
 	        }
 	    }, {
 	        key: 'handleDoubleClick',
@@ -22204,10 +22209,14 @@
 	    }, {
 	        key: 'renderImage',
 	        value: function renderImage(data) {
+	            var imagem = data.editions[0].image_url;
+	            //Get random art, for fun purpouses
+	            //const imagem = data.editions[Math.floor(Math.random() * data.editions.length)].image_url;
+	            debugger;
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'card-image' },
-	                _react2.default.createElement('img', { src: data.editions[0].image_url })
+	                _react2.default.createElement('img', { src: imagem })
 	            );
 	        }
 	    }, {
