@@ -61,9 +61,13 @@ export default class Card extends Component {
     }
 
     renderImage(data) {
+        const imagem = data.editions[0].image_url;
+        //Get random art, for fun purpouses
+        //const imagem = data.editions[Math.floor(Math.random() * data.editions.length)].image_url;
+        debugger
         return (
             <div className="card-image">
-                <img src={data.editions[0].image_url}/>
+                <img src={imagem}/>
             </div>    
         )
     }
