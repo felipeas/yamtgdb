@@ -36,6 +36,7 @@ export default class Card extends Component {
         const { showImage, showText, showCount }  = this.props
         
         //TODO:
+        //show text
         //svgeezus all the symbols in parsing
         return (
             <Tooltip
