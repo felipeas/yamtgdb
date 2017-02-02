@@ -30,10 +30,8 @@ export default class SearchList extends Component {
         })
     }
 
-    renderTitle(self, name) {
-        return (
-            <h2>{name}</h2>
-        )
+    renderTitle(name) {
+        return (<h2>{name}</h2>)
     }
 
     render () {
@@ -48,10 +46,12 @@ export default class SearchList extends Component {
         
         return (
             <div className={classnames('list', className)}>
-                {renderTitle(this, name)}
+                {renderTitle(name)}
                 
                 <div className='list-header'>
-                    <span className='list-header-total'>{total}</span>
+                    {total > 0 ? 
+                        (<span className='list-header-total'>{total} found</span>) 
+                    : (<span>nothing</span>)}
                 </div>
                 {cards}
             </div>

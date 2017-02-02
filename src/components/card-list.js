@@ -105,7 +105,7 @@ export default class CardList extends Component {
         if (title) {
             return (
                 <div className='list-header'>
-                    <span className='list-header-subtotal'>{total}</span>
+                    {total > 0 ? (<span className='list-header-subtotal'>{total}</span>) : null}
                     <span className='list-header-type'>{title}</span>
                     {cards}
                 </div>
@@ -188,7 +188,7 @@ export default class CardList extends Component {
             <div className={classnames('list', className)}>
                 { editing ? renderInput(this, data.name) : renderTitle(this, data.name)}
                 <div className='list-header'>
-                    <span className='list-header-total'>{totalMain}</span>
+                    {totalMain > 0 ? (<span className='list-header-total'>{totalMain}</span>) : null}
                 </div>
                 {main}
                 {side}
