@@ -15,10 +15,10 @@ export default class CardSearch extends Component {
     }    
     
     handleSubmit (e) {
-        e.preventDefault();
+        e.preventDefault()
 
         const searchTerm = e.target.search.value
-        const url = `https://api.deckbrew.com/mtg/cards?name=${searchTerm}`;
+        const url = `https://api.deckbrew.com/mtg/cards?name=${searchTerm}`
 
         this.setState({
                 isFetching: true
@@ -30,7 +30,7 @@ export default class CardSearch extends Component {
                     this.props.onSubmit(data)
                     this.setState({isFetching: false})
                 })
-                .catch(err => console.error(url, err.toString()));
+                .catch(err => console.error(url, err.toString()))
             }
         );
     }

@@ -13,7 +13,7 @@ export default class DeckList extends Component {
     }
 
     render () {
-        const { data } = this.props;
+        const { data, active } = this.props;
 
         const decks = data.map((item, index) => {  
             return (
@@ -21,6 +21,7 @@ export default class DeckList extends Component {
                     key={index}
                     data={item}
                     onClick={this.props.onDeckChange}
+                    className={item.id == active? 'deck-active': ''}
                 />
             )
         })

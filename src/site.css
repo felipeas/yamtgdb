@@ -38,6 +38,11 @@ body {
     line-height: 3
 }
 
+.deck-active {
+    background-color:black;
+    color: white;
+}
+
 .deck-name-input {
     font-size: 24;
 }

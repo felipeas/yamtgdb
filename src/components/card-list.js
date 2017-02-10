@@ -12,7 +12,7 @@ export default class CardList extends Component {
     constructor (props) {
         super(props)
         this.state = { editing: false }
-    
+
         this.toggleEdit = this.toggleEdit.bind(this)
         this.handleChangeTitle = this.handleChangeTitle.bind(this)
         this.handleClick = this.handleClick.bind(this)
@@ -49,7 +49,7 @@ export default class CardList extends Component {
     handleDoubleClick (card, isSide) {
         clearTimeout(timer);
         prevent = true;
-                    
+
         this.props.onCardDoubleClick(card, isSide)
     }
 

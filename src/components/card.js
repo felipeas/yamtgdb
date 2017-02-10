@@ -1,10 +1,21 @@
 import React, { Component } from 'react'
 import ManaCost from './mana-cost'
 import Tooltip from './tooltip'
+import { liga } from '../modules/price'
+
 
 export default class Card extends Component {
     constructor (props) {
         super(props)
+
+        this.state = {price: 2}
+    }
+
+    componentDidMount () {
+        const p = liga(this.props.data)
+        this.setState({
+            price: p
+        })
     }
 
     handleClick() {
@@ -32,9 +43,11 @@ export default class Card extends Component {
     }   
 
     render () {
-        const { data, count }= this.props
+        const { price } = this.state;
+        const { data, count } = this.props
         const { showImage, showText, showCount }  = this.props
         
+        const showPrice = true;
         //TODO:
         //show text
         //svgeezus all the symbols in parsing
@@ -56,6 +69,7 @@ export default class Card extends Component {
                     {showCount ? this.renderCount(count) : '' }
                     {showText ? this.renderText(data) : '' }
                     {showImage ? this.renderImage(data) : '' }
+                    <span>{price}</span>
                 </div>
             </Tooltip>
         )
@@ -65,7 +79,6 @@ export default class Card extends Component {
         const imagem = data.editions[0].image_url;
         //Get random art, for fun purpouses
         //const imagem = data.editions[Math.floor(Math.random() * data.editions.length)].image_url;
-        debugger
         return (
             <div className="card-image">
                 <img src={imagem}/>

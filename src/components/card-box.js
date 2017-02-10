@@ -228,6 +228,7 @@ export default class CardBox extends Component {
                     />
                     <DeckList
                         data={decks}
+                        active={this.state.active}
                         onNew={this.handleNewDeck.bind(this)}
                         onDeckChange={this.handleDeckChange.bind(this)}
                     />

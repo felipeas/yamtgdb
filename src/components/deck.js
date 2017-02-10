@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import classnames from 'classnames'
 
 export default class Card extends Component {
     constructor (props) {
@@ -14,10 +15,10 @@ export default class Card extends Component {
     }
 
     render () {
-        const { data } = this.props
+        const { data, className } = this.props
         
         return (
-            <div className="deck-wrapper">
+            <div className={classnames('deck-wrapper', className)}>
                 <div className="deck-title">
                     <span
                         onClick={this.handleClick}
