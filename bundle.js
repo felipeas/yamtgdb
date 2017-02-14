@@ -22104,7 +22104,7 @@
 /* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -22156,10 +22156,11 @@
 
 	            var card = this.props.data;
 	            var url = 'http://localhost:3000/price?card=' + card.name;
+	            url = 'https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=' + card.name;
 
-	            if (process.env.NODE_ENV == 'production') {
-	                url = 'https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=' + card.name;
-	            }
+	            //if (process.env.NODE_ENV == 'production') {
+	            //    url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
+	            //}
 
 	            this.setState({
 	                isFetching: true
@@ -22315,7 +22316,6 @@
 	}(_react.Component);
 
 	exports.default = Card;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
 /* 177 */
