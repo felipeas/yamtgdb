@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --progress --colors --inline",
-    "build": "webpack --progress --colors",
+    "build": "cross-env NODE_ENV=production webpack",
     "clean": "rimraf dist",
     "deploy": "npm run clean && npm run build && gh-pages -d dist"
   },
@@ -27,6 +27,7 @@
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.14.0",
     "copy-webpack-plugin": "^3.0.1",
+    "cross-env": "^3.1.4",
     "gh-pages": "^0.11.0",
     "html-webpack-plugin": "^2.22.0",
     "react": "^15.3.1",

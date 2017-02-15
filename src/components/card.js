@@ -8,14 +8,36 @@ export default class Card extends Component {
     constructor (props) {
         super(props)
 
-        this.state = {price: 2}
+        this.state = {
+            isFetching: false,
+            price: 0
+        } 
     }
 
     componentDidMount () {
-        const p = liga(this.props.data)
+        const card = this.props.data
+        let url = `http://localhost:3000/price?card=${card.name}`
+        url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
+        
+        //if (process.env.NODE_ENV == 'production') {
+        //    url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
+        //}
+    
         this.setState({
-            price: p
-        })
+                isFetching: true
+            },
+            () => {
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({
+                        isFetching: false,
+                        price: data.Low
+                    })
+                })
+                .catch(err => console.error(url, err.toString()))
+            }
+        );
     }
 
     handleClick() {
@@ -45,7 +67,7 @@ export default class Card extends Component {
     render () {
         const { price } = this.state;
         const { data, count } = this.props
-        const { showImage, showText, showCount }  = this.props
+        const { showImage, showText, showCount } = this.props
         
         const showPrice = true;
         //TODO:
@@ -69,7 +91,7 @@ export default class Card extends Component {
                     {showCount ? this.renderCount(count) : '' }
                     {showText ? this.renderText(data) : '' }
                     {showImage ? this.renderImage(data) : '' }
-                    <span>{price}</span>
+                    {showPrice ? this.renderPrice(price) : '' }
                 </div>
             </Tooltip>
         )
@@ -101,6 +123,16 @@ export default class Card extends Component {
         return (
             <div className="card-count">
                 <span>{data}</span>
+            </div>   
+        )
+    }
+    
+    renderPrice(data) {
+        const { isFetching, price } = this.state
+
+        return (
+            <div className="card-price">
+                <span>{isFetching ? '...' : price }</span>
             </div>   
         )
     }
