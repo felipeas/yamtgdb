@@ -21460,15 +21460,15 @@
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _searchList = __webpack_require__(183);
+	var _searchList = __webpack_require__(181);
 
 	var _searchList2 = _interopRequireDefault(_searchList);
 
-	var _deckList = __webpack_require__(184);
+	var _deckList = __webpack_require__(182);
 
 	var _deckList2 = _interopRequireDefault(_deckList);
 
-	var _cardSearch = __webpack_require__(186);
+	var _cardSearch = __webpack_require__(185);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
@@ -21517,7 +21517,7 @@
 	                },
 	                cards: {
 	                    id: 0,
-	                    name: '<missingNO>',
+	                    name: '<no name>',
 	                    main: {
 	                        list: [],
 	                        counter: {}
@@ -21713,20 +21713,19 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                { id: 'cardbox' },
+	                {
+	                    id: 'cardbox',
+	                    className: 'container'
+	                },
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'title' },
-	                    _react2.default.createElement(
-	                        'h1',
-	                        null,
-	                        'yamtgdb'
-	                    ),
-	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'sub-title' },
-	                        'yet another magic the gathering deck builder'
-	                    )
+	                    'h1',
+	                    { className: 'title is-1' },
+	                    'yamtgdb'
+	                ),
+	                _react2.default.createElement(
+	                    'h2',
+	                    { className: 'subtitle is-6' },
+	                    'yet another magic the gathering deck builder'
 	                ),
 	                _react2.default.createElement(_cardSearch2.default, {
 	                    onChange: this.handleOnSearchChange.bind(this),
@@ -21734,31 +21733,37 @@
 	                }),
 	                _react2.default.createElement(
 	                    'section',
-	                    { className: 'lists' },
-	                    _react2.default.createElement(_searchList2.default, {
-	                        id: 'search-list',
-	                        name: 'search',
-	                        className: 'search',
-	                        data: search,
-	                        onCardClick: this.handleOnSearchResultClick.bind(this)
-	                    }),
-	                    _react2.default.createElement(_cardList2.default, {
-	                        id: 'card-list',
-	                        name: 'deck',
-	                        className: 'deck',
-	                        data: cards,
-	                        onCardClick: this.handleOnDeckCardClick.bind(this),
-	                        onCardDoubleClick: this.handleOnDeckDoubleCardClick.bind(this),
-	                        onCardContextMenu: this.handleContextMenuClick.bind(this),
-	                        onChangeTitle: this.handleDeckChangeTitle.bind(this),
-	                        grouped: true
-	                    }),
-	                    _react2.default.createElement(_deckList2.default, {
-	                        data: decks,
-	                        active: this.state.active,
-	                        onNew: this.handleNewDeck.bind(this),
-	                        onDeckChange: this.handleDeckChange.bind(this)
-	                    })
+	                    { className: 'section' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'container' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'columns' },
+	                            _react2.default.createElement(_searchList2.default, {
+	                                id: 'search-list',
+	                                name: 'search',
+	                                data: search,
+	                                onCardClick: this.handleOnSearchResultClick.bind(this)
+	                            }),
+	                            _react2.default.createElement(_cardList2.default, {
+	                                id: 'card-list',
+	                                name: 'deck',
+	                                data: cards,
+	                                onCardClick: this.handleOnDeckCardClick.bind(this),
+	                                onCardDoubleClick: this.handleOnDeckDoubleCardClick.bind(this),
+	                                onCardContextMenu: this.handleContextMenuClick.bind(this),
+	                                onChangeTitle: this.handleDeckChangeTitle.bind(this),
+	                                grouped: true
+	                            }),
+	                            _react2.default.createElement(_deckList2.default, {
+	                                data: decks,
+	                                active: this.state.active,
+	                                onNew: this.handleNewDeck.bind(this),
+	                                onDeckChange: this.handleDeckChange.bind(this)
+	                            })
+	                        )
+	                    )
 	                )
 	            );
 	        }
@@ -21787,15 +21792,11 @@
 
 	var _reactDom = __webpack_require__(35);
 
-	var _classnames = __webpack_require__(175);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _card = __webpack_require__(176);
+	var _card = __webpack_require__(175);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(181);
+	var _lodash = __webpack_require__(179);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -21952,11 +21953,11 @@
 	    }, {
 	        key: 'renderTitle',
 	        value: function renderTitle(self, name) {
-	            var title = name ? name : '<missingNO>';
-
+	            var title = name ? name : '<no name>';
 	            return _react2.default.createElement(
 	                'h2',
 	                {
+	                    className: 'title is-4',
 	                    key: name,
 	                    onClick: self.toggleEdit
 	                },
@@ -21968,10 +21969,9 @@
 	        value: function renderInput(self, name) {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'deck-name' },
+	                { className: 'block' },
 	                _react2.default.createElement('input', {
 	                    ref: 'name',
-	                    className: 'deck-name-input',
 	                    type: 'text',
 	                    placeholder: name,
 	                    onKeyPress: self.handleChangeTitle,
@@ -22024,7 +22024,7 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: (0, _classnames2.default)('list', className) },
+	                { className: 'is-one-third-desktop column' },
 	                editing ? renderInput(this, data.name) : renderTitle(this, data.name),
 	                _react2.default.createElement(
 	                    'div',
@@ -22050,60 +22050,6 @@
 /* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -22116,15 +22062,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _manaCost = __webpack_require__(177);
+	var _manaCost = __webpack_require__(176);
 
 	var _manaCost2 = _interopRequireDefault(_manaCost);
 
-	var _tooltip = __webpack_require__(178);
+	var _tooltip = __webpack_require__(177);
 
 	var _tooltip2 = _interopRequireDefault(_tooltip);
-
-	var _price = __webpack_require__(180);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22157,10 +22101,6 @@
 	            var card = this.props.data;
 	            var url = 'http://localhost:3000/price?card=' + card.name;
 	            url = 'https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=' + card.name;
-
-	            //if (process.env.NODE_ENV == 'production') {
-	            //    url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
-	            //}
 
 	            this.setState({
 	                isFetching: true
@@ -22230,20 +22170,12 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    {
-	                        className: 'card-wrapper',
+	                        className: 'container is-red',
 	                        onClick: this.handleClick.bind(this),
 	                        onDoubleClick: this.handleDoubleClick.bind(this),
 	                        onContextMenu: this.handleContextMenu.bind(this)
 	                    },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'card-title' },
-	                        _react2.default.createElement(
-	                            'span',
-	                            null,
-	                            data.name
-	                        )
-	                    ),
+	                    this.renderName(data.name),
 	                    showCount ? this.renderCount(count) : '',
 	                    showText ? this.renderText(data) : '',
 	                    showImage ? this.renderImage(data) : '',
@@ -22259,8 +22191,17 @@
 	            //const imagem = data.editions[Math.floor(Math.random() * data.editions.length)].image_url;
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'card-image' },
+	                null,
 	                _react2.default.createElement('img', { src: imagem })
+	            );
+	        }
+	    }, {
+	        key: 'renderName',
+	        value: function renderName(name) {
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                name
 	            );
 	        }
 	    }, {
@@ -22318,7 +22259,7 @@
 	exports.default = Card;
 
 /***/ },
-/* 177 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22386,7 +22327,7 @@
 	exports.default = ManaCost;
 
 /***/ },
-/* 178 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22403,7 +22344,7 @@
 
 	var _reactDom = __webpack_require__(35);
 
-	var _renderIntoBody = __webpack_require__(179);
+	var _renderIntoBody = __webpack_require__(178);
 
 	var _renderIntoBody2 = _interopRequireDefault(_renderIntoBody);
 
@@ -22522,7 +22463,7 @@
 	exports.default = Tooltip;
 
 /***/ },
-/* 179 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22596,33 +22537,7 @@
 	exports.default = RenderIntoBody;
 
 /***/ },
-/* 180 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.liga = liga;
-	function liga(card) {
-	    var searchTerm = card.name;
-	    //const url = `https://liga-price-crawler-vdmjaysrhv.now.sh/price?card=${searchTerm}`
-	    var url = "http://localhost:3000/price?card=" + searchTerm;
-
-	    fetch(url).then(function (response) {
-	        return response.json();
-	    }).then(function (data) {
-	        console.log(data);
-	    }).catch(function (err) {
-	        return console.error(url, err.toString());
-	    });
-
-	    return "0";
-	}
-
-/***/ },
-/* 181 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -39521,10 +39436,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(182)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(180)(module)))
 
 /***/ },
-/* 182 */
+/* 180 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -39540,7 +39455,7 @@
 
 
 /***/ },
-/* 183 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39555,15 +39470,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(175);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _card = __webpack_require__(176);
+	var _card = __webpack_require__(175);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(181);
+	var _lodash = __webpack_require__(179);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -39603,12 +39514,16 @@
 	            var _this2 = this;
 
 	            return list.map(function (item, index) {
-	                return _react2.default.createElement(_card2.default, {
-	                    key: item.id,
-	                    data: item,
-	                    onClick: _this2.props.onCardClick,
-	                    showCount: false
-	                });
+	                return _react2.default.createElement(
+	                    'li',
+	                    null,
+	                    _react2.default.createElement(_card2.default, {
+	                        key: item.id,
+	                        data: item,
+	                        onClick: _this2.props.onCardClick,
+	                        showCount: false
+	                    })
+	                );
 	            });
 	        }
 	    }, {
@@ -39616,7 +39531,7 @@
 	        value: function renderTitle(name) {
 	            return _react2.default.createElement(
 	                'h2',
-	                null,
+	                { className: 'title is-4' },
 	                name
 	            );
 	        }
@@ -39640,23 +39555,31 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: (0, _classnames2.default)('list', className) },
+	                { className: 'is-one-third-desktop column' },
 	                renderTitle(name),
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'list-header' },
+	                    { className: 'block' },
 	                    total > 0 ? _react2.default.createElement(
-	                        'span',
-	                        { className: 'list-header-total' },
+	                        'strong',
+	                        null,
 	                        total,
 	                        ' found'
 	                    ) : _react2.default.createElement(
-	                        'span',
+	                        'strong',
 	                        null,
 	                        'nothing'
 	                    )
 	                ),
-	                cards
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'menu' },
+	                    _react2.default.createElement(
+	                        'ul',
+	                        { className: 'menu-list' },
+	                        cards
+	                    )
+	                )
 	            );
 	        }
 	    }]);
@@ -39667,7 +39590,7 @@
 	exports.default = SearchList;
 
 /***/ },
-/* 184 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39682,7 +39605,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _deck = __webpack_require__(185);
+	var _deck = __webpack_require__(183);
 
 	var _deck2 = _interopRequireDefault(_deck);
 
@@ -39726,19 +39649,27 @@
 	                    key: index,
 	                    data: item,
 	                    onClick: _this2.props.onDeckChange,
-	                    className: item.id == active ? 'deck-active' : ''
+	                    active: active == item.id
 	                });
 	            });
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'deck-list' },
+	                { className: 'is-one-third-desktop column' },
 	                _react2.default.createElement(
 	                    'h2',
-	                    null,
+	                    { className: 'title is-4' },
 	                    'decks'
 	                ),
-	                decks,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'menu' },
+	                    _react2.default.createElement(
+	                        'ul',
+	                        { className: 'menu-list' },
+	                        decks
+	                    )
+	                ),
 	                _react2.default.createElement(
 	                    'a',
 	                    {
@@ -39756,7 +39687,7 @@
 	exports.default = DeckList;
 
 /***/ },
-/* 185 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39771,7 +39702,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(175);
+	var _classnames = __webpack_require__(184);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -39808,22 +39739,19 @@
 	        value: function render() {
 	            var _props = this.props;
 	            var data = _props.data;
-	            var className = _props.className;
+	            var active = _props.active;
 
 
 	            return _react2.default.createElement(
-	                'div',
-	                { className: (0, _classnames2.default)('deck-wrapper', className) },
+	                'li',
+	                null,
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'deck-title' },
-	                    _react2.default.createElement(
-	                        'span',
-	                        {
-	                            onClick: this.handleClick
-	                        },
-	                        data.name
-	                    )
+	                    'a',
+	                    {
+	                        className: active ? 'label is-active is-black' : 'label is-black',
+	                        onClick: this.handleClick
+	                    },
+	                    data.name
 	                )
 	            );
 	        }
@@ -39835,10 +39763,64 @@
 	exports.default = Card;
 
 /***/ },
-/* 186 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -39849,6 +39831,10 @@
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(184);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39873,20 +39859,20 @@
 	    }
 
 	    _createClass(CardSearch, [{
-	        key: "componentDidUpdate",
+	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(nextProps, nextState) {
 	            // console.log(nextProps)
 	            // console.log(nextState)
 	        }
 	    }, {
-	        key: "handleSubmit",
+	        key: 'handleSubmit',
 	        value: function handleSubmit(e) {
 	            var _this2 = this;
 
 	            e.preventDefault();
 
 	            var searchTerm = e.target.search.value;
-	            var url = "https://api.deckbrew.com/mtg/cards?name=" + searchTerm;
+	            var url = 'https://api.deckbrew.com/mtg/cards?name=' + searchTerm;
 
 	            this.setState({
 	                isFetching: true
@@ -39902,39 +39888,47 @@
 	            });
 	        }
 	    }, {
-	        key: "handleChange",
+	        key: 'handleChange',
 	        value: function handleChange(e) {
 	            e.preventDefault();
 	            this.props.onChange({ text: e.target.value });
 	        }
 	    }, {
-	        key: "updateSearch",
+	        key: 'updateSearch',
 	        value: function updateSearch(data) {
 	            // TODO: paginated searchs, api return lists by 100, 
 	            // if array lenght is > 100 then lookup for page 2, 3 and goes on
 	        }
 	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var props = this.props;
 
 	            return _react2.default.createElement(
-	                "form",
-	                { onSubmit: this.handleSubmit.bind(this) },
-	                _react2.default.createElement("input", {
-	                    autoFocus: true,
-	                    id: "search",
-	                    ref: "search",
-	                    type: "text",
-	                    placeholder: "search",
-	                    onChange: this.handleChange.bind(this)
-	                }),
+	                'form',
+	                {
+	                    onSubmit: this.handleSubmit.bind(this),
+	                    className: 'container'
+	                },
 	                _react2.default.createElement(
-	                    "label",
-	                    {
-	                        style: this.state.isFetching ? { display: 'block' } : { display: 'none' }
-	                    },
-	                    "fetching"
+	                    'p',
+	                    { className: 'control has-addons search-button' },
+	                    _react2.default.createElement('input', {
+	                        id: 'search',
+	                        autoFocus: true,
+	                        className: 'input ',
+	                        type: 'text',
+	                        placeholder: 'search here'
+	                    }),
+	                    _react2.default.createElement(
+	                        'a',
+	                        {
+	                            className: (0, _classnames2.default)('button', this.state.isFetching ? 'is-loading is-dark' : 'is-dark'),
+	                            onClick: this.handleSubmit.bind(this),
+	                            enabled: this.state.isFetching ? true : false
+	                        },
+	                        'search'
+	                    )
 	                )
 	            );
 	        }
