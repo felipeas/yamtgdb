@@ -21709,46 +21709,67 @@
 	            var search = _state.search;
 	            var cards = _state.cards;
 	            var decks = _state.decks;
-
+	            // por a quantidade de cartas no name ()
 
 	            return _react2.default.createElement(
 	                'div',
 	                {
 	                    id: 'cardbox',
-	                    className: 'container'
+	                    className: 'container is-black'
 	                },
 	                _react2.default.createElement(
-	                    'h1',
-	                    { className: 'title is-1' },
-	                    'yamtgdb'
+	                    'nav',
+	                    { className: 'nav is-boxed is-flex-desktop-only' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'nav-left' },
+	                        _react2.default.createElement(
+	                            'a',
+	                            { className: 'nav-item title is-3' },
+	                            'yamtgdb'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'nav-center' },
+	                        _react2.default.createElement(
+	                            'a',
+	                            { className: 'nav-item is-tab is-hidden-desktop is-active' },
+	                            'search'
+	                        ),
+	                        _react2.default.createElement(
+	                            'a',
+	                            { className: 'nav-item is-tab is-hidden-desktop' },
+	                            this.state.cards.name + ' (' + 60 + ')',
+	                            ' '
+	                        ),
+	                        _react2.default.createElement(
+	                            'a',
+	                            { className: 'nav-item is-tab is-hidden-desktop' },
+	                            'list'
+	                        )
+	                    )
 	                ),
-	                _react2.default.createElement(
-	                    'h2',
-	                    { className: 'subtitle is-6' },
-	                    'yet another magic the gathering deck builder'
-	                ),
-	                _react2.default.createElement(_cardSearch2.default, {
-	                    onChange: this.handleOnSearchChange.bind(this),
-	                    onSubmit: this.handleOnSearchSubmit
-	                }),
 	                _react2.default.createElement(
 	                    'section',
 	                    { className: 'section' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'container' },
+	                        _react2.default.createElement(_cardSearch2.default, {
+	                            onChange: this.handleOnSearchChange.bind(this),
+	                            onSubmit: this.handleOnSearchSubmit
+	                        }),
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'columns' },
 	                            _react2.default.createElement(_searchList2.default, {
 	                                id: 'search-list',
-	                                name: 'search',
 	                                data: search,
 	                                onCardClick: this.handleOnSearchResultClick.bind(this)
 	                            }),
 	                            _react2.default.createElement(_cardList2.default, {
 	                                id: 'card-list',
-	                                name: 'deck',
 	                                data: cards,
 	                                onCardClick: this.handleOnDeckCardClick.bind(this),
 	                                onCardDoubleClick: this.handleOnDeckDoubleCardClick.bind(this),
@@ -21933,18 +21954,22 @@
 	            if (title) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { className: 'list-header' },
+	                    { className: '' },
 	                    total > 0 ? _react2.default.createElement(
 	                        'span',
-	                        { className: 'list-header-subtotal' },
+	                        { className: 'title is-5' },
 	                        total
 	                    ) : null,
 	                    _react2.default.createElement(
 	                        'span',
-	                        { className: 'list-header-type' },
+	                        { className: 'title is-5' },
 	                        title
 	                    ),
-	                    cards
+	                    _react2.default.createElement(
+	                        'div',
+	                        { 'class': 'columns' },
+	                        cards
+	                    )
 	                );
 	            }
 
@@ -22021,20 +22046,10 @@
 	            var side = this.renderGroup('sideboard', data.side.list, data.side.counter);
 
 	            var main = [lands, creatures, other];
-
+	            // duas table
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'is-one-third-desktop column' },
-	                editing ? renderInput(this, data.name) : renderTitle(this, data.name),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'list-header' },
-	                    totalMain > 0 ? _react2.default.createElement(
-	                        'span',
-	                        { className: 'list-header-total' },
-	                        totalMain
-	                    ) : null
-	                ),
 	                main,
 	                side
 	            );
@@ -22169,18 +22184,28 @@
 	                },
 	                _react2.default.createElement(
 	                    'div',
-	                    {
-	                        className: 'container is-red',
-	                        onClick: this.handleClick.bind(this),
-	                        onDoubleClick: this.handleDoubleClick.bind(this),
-	                        onContextMenu: this.handleContextMenu.bind(this)
-	                    },
-	                    this.renderName(data.name),
-	                    showCount ? this.renderCount(count) : '',
-	                    showText ? this.renderText(data) : '',
-	                    showImage ? this.renderImage(data) : '',
-	                    showPrice ? this.renderPrice(price) : ''
-	                )
+	                    { className: 'columns is-mobile is-gapless box' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'column is-1' },
+	                        showCount ? count : ''
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'column is-three-quarters' },
+	                        data.name
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'column is-one-quarter' },
+	                        showPrice ? price : ''
+	                    )
+	                ),
+	                _react2.default.createElement('div', {
+	                    onClick: this.handleClick.bind(this),
+	                    onDoubleClick: this.handleDoubleClick.bind(this),
+	                    onContextMenu: this.handleContextMenu.bind(this)
+	                })
 	            );
 	        }
 	    }, {
@@ -22202,35 +22227,6 @@
 	                'span',
 	                null,
 	                name
-	            );
-	        }
-	    }, {
-	        key: 'renderText',
-	        value: function renderText(data) {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'card-text' },
-	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    data.text ? data.text : '[none]'
-	                ),
-	                _react2.default.createElement(_manaCost2.default, {
-	                    data: data.cost
-	                })
-	            );
-	        }
-	    }, {
-	        key: 'renderCount',
-	        value: function renderCount(data) {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'card-count' },
-	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    data
-	                )
 	            );
 	        }
 	    }, {
@@ -39514,16 +39510,12 @@
 	            var _this2 = this;
 
 	            return list.map(function (item, index) {
-	                return _react2.default.createElement(
-	                    'li',
-	                    null,
-	                    _react2.default.createElement(_card2.default, {
-	                        key: item.id,
-	                        data: item,
-	                        onClick: _this2.props.onCardClick,
-	                        showCount: false
-	                    })
-	                );
+	                return _react2.default.createElement(_card2.default, {
+	                    key: item.id,
+	                    data: item,
+	                    onClick: _this2.props.onCardClick,
+	                    showCount: false
+	                });
 	            });
 	        }
 	    }, {
@@ -39556,29 +39548,25 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'is-one-third-desktop column' },
-	                renderTitle(name),
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'block' },
-	                    total > 0 ? _react2.default.createElement(
-	                        'strong',
-	                        null,
-	                        total,
-	                        ' found'
-	                    ) : _react2.default.createElement(
-	                        'strong',
-	                        null,
-	                        'nothing'
+	                    { className: 'is-hidden-mobile' },
+	                    _react2.default.createElement(
+	                        'h2',
+	                        { className: 'title is-4' },
+	                        'search'
 	                    )
 	                ),
+	                total > 0 ? _react2.default.createElement(
+	                    'span',
+	                    { className: 'title is-5' },
+	                    total,
+	                    ' found'
+	                ) : 'nothing',
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'menu' },
-	                    _react2.default.createElement(
-	                        'ul',
-	                        { className: 'menu-list' },
-	                        cards
-	                    )
+	                    { 'class': 'columns' },
+	                    cards
 	                )
 	            );
 	        }
@@ -39657,9 +39645,13 @@
 	                'div',
 	                { className: 'is-one-third-desktop column' },
 	                _react2.default.createElement(
-	                    'h2',
-	                    { className: 'title is-4' },
-	                    'decks'
+	                    'div',
+	                    { className: 'is-hidden-mobile' },
+	                    _react2.default.createElement(
+	                        'h2',
+	                        { className: 'title is-4' },
+	                        'decks'
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -39908,22 +39900,22 @@
 	                'form',
 	                {
 	                    onSubmit: this.handleSubmit.bind(this),
-	                    className: 'container'
+	                    className: 'container is-flex-desktop-only'
 	                },
 	                _react2.default.createElement(
 	                    'p',
-	                    { className: 'control has-addons search-button' },
+	                    { className: 'control has-addons search-button is-one-third-desktop' },
 	                    _react2.default.createElement('input', {
 	                        id: 'search',
 	                        autoFocus: true,
-	                        className: 'input ',
+	                        className: 'input is-expanded',
 	                        type: 'text',
 	                        placeholder: 'search here'
 	                    }),
 	                    _react2.default.createElement(
 	                        'a',
 	                        {
-	                            className: (0, _classnames2.default)('button', this.state.isFetching ? 'is-loading is-dark' : 'is-dark'),
+	                            className: (0, _classnames2.default)('button', this.state.isFetching ? 'is-loading is-dark is-disabled' : 'is-dark'),
 	                            onClick: this.handleSubmit.bind(this),
 	                            enabled: this.state.isFetching ? true : false
 	                        },
