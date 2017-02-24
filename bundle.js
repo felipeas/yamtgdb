@@ -21719,7 +21719,7 @@
 	                },
 	                _react2.default.createElement(
 	                    'nav',
-	                    { className: 'nav is-boxed is-flex-desktop-only' },
+	                    { className: 'nav is-flex-desktop-only' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'nav-left' },
@@ -21944,8 +21944,6 @@
 	                    onClick: _this3.handleClick,
 	                    onDoubleClick: _this3.handleDoubleClick,
 	                    onContextMenu: _this3.props.onCardContextMenu,
-	                    showImage: showImages,
-	                    showText: showText,
 	                    showCount: showCount,
 	                    count: counter[item.id]
 	                });
@@ -21954,22 +21952,13 @@
 	            if (title) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { className: '' },
-	                    total > 0 ? _react2.default.createElement(
-	                        'span',
-	                        { className: 'title is-5' },
-	                        total
-	                    ) : null,
+	                    { className: 'container' },
 	                    _react2.default.createElement(
 	                        'span',
 	                        { className: 'title is-5' },
-	                        title
+	                        total > 0 ? '(' + total + ') ' + title : 'no ' + title
 	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { 'class': 'columns' },
-	                        cards
-	                    )
+	                    cards
 	                );
 	            }
 
@@ -22166,11 +22155,7 @@
 	            var _props = this.props;
 	            var data = _props.data;
 	            var count = _props.count;
-	            var _props2 = this.props;
-	            var showImage = _props2.showImage;
-	            var showText = _props2.showText;
-	            var showCount = _props2.showCount;
-
+	            var showCount = this.props.showCount;
 
 	            var showPrice = true;
 	            //TODO:
@@ -22184,7 +22169,12 @@
 	                },
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'columns is-mobile is-gapless box' },
+	                    {
+	                        className: 'columns is-mobile is-gapless box',
+	                        onClick: this.handleClick.bind(this),
+	                        onDoubleClick: this.handleDoubleClick.bind(this),
+	                        onContextMenu: this.handleContextMenu.bind(this)
+	                    },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'column is-1' },
@@ -22198,14 +22188,13 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'column is-one-quarter' },
-	                        showPrice ? price : ''
+	                        showPrice ? _react2.default.createElement(
+	                            'p',
+	                            { className: 'is warming' },
+	                            price
+	                        ) : ''
 	                    )
-	                ),
-	                _react2.default.createElement('div', {
-	                    onClick: this.handleClick.bind(this),
-	                    onDoubleClick: this.handleDoubleClick.bind(this),
-	                    onContextMenu: this.handleContextMenu.bind(this)
-	                })
+	                )
 	            );
 	        }
 	    }, {
@@ -22240,11 +22229,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'card-price' },
-	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    isFetching ? '...' : price
-	                )
+	                isFetching ? '...' : price
 	            );
 	        }
 	    }]);
@@ -39916,8 +39901,7 @@
 	                        'a',
 	                        {
 	                            className: (0, _classnames2.default)('button', this.state.isFetching ? 'is-loading is-dark is-disabled' : 'is-dark'),
-	                            onClick: this.handleSubmit.bind(this),
-	                            enabled: this.state.isFetching ? true : false
+	                            onClick: this.handleSubmit.bind(this)
 	                        },
 	                        'search'
 	                    )
