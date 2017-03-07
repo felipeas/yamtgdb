@@ -21456,19 +21456,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _cardList = __webpack_require__(174);
+	var _nav = __webpack_require__(174);
+
+	var _nav2 = _interopRequireDefault(_nav);
+
+	var _cardList = __webpack_require__(175);
 
 	var _cardList2 = _interopRequireDefault(_cardList);
 
-	var _searchList = __webpack_require__(181);
+	var _searchList = __webpack_require__(182);
 
 	var _searchList2 = _interopRequireDefault(_searchList);
 
-	var _deckList = __webpack_require__(182);
+	var _deckList = __webpack_require__(183);
 
 	var _deckList2 = _interopRequireDefault(_deckList);
 
-	var _cardSearch = __webpack_require__(185);
+	var _cardSearch = __webpack_require__(186);
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
@@ -21495,6 +21499,7 @@
 	        _this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || _this.state.search;
 	        _this.state.active = JSON.parse(localStorage.getItem('yamtgdb-active')) || _this.state.active;
 	        _this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks')) || _this.state.decks;
+	        _this.state.nav = JSON.parse(localStorage.getItem('yamtgdb-nav')) || _this.state.nav;
 
 	        if (_this.state.active > 0) {
 	            _this.state.cards = _this.state.decks.find(function (deck) {
@@ -21503,6 +21508,7 @@
 	        }
 
 	        _this.handleOnSearchSubmit = _this.handleOnSearchSubmit.bind(_this);
+	        _this.handleSection = _this.handleSection.bind(_this);
 	        return _this;
 	    }
 
@@ -21527,7 +21533,8 @@
 	                        counter: {}
 	                    }
 	                },
-	                decks: []
+	                decks: [],
+	                nav: 'search'
 	            };
 
 	            return initialState;
@@ -21538,6 +21545,7 @@
 	            localStorage.setItem('yamtgdb-search', JSON.stringify(this.state.search));
 	            localStorage.setItem('yamtgdb-active', JSON.stringify(this.state.active));
 	            localStorage.setItem('yamtgdb-decks', JSON.stringify(this.state.decks));
+	            localStorage.setItem('yamtgdb-nav', JSON.stringify(this.state.nav));
 	        }
 	    }, {
 	        key: 'handleOnSearchChange',
@@ -21697,6 +21705,19 @@
 	            this.setState({ active: deck.id, cards: deck, decks: decks });
 	        }
 	    }, {
+	        key: 'handleSection',
+	        value: function handleSection(section) {
+	            this.setState({ nav: section });
+	        }
+	    }, {
+	        key: 'getActiveDeck',
+	        value: function getActiveDeck() {
+	            return {
+	                name: 'lolol',
+	                count: 60
+	            };
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            // TODO: 
@@ -21704,12 +21725,18 @@
 	            // save deck
 	            // collection
 	            // move bindingins to constructor
-
+	            // define prop types
 	            var _state = this.state;
 	            var search = _state.search;
 	            var cards = _state.cards;
 	            var decks = _state.decks;
+	            var nav = _state.nav;
 	            // por a quantidade de cartas no name ()
+
+
+	            var shouldBeSeenMobile = function shouldBeSeenMobile(section) {
+	                return nav == section ? false : true;
+	            };
 
 	            return _react2.default.createElement(
 	                'div',
@@ -21717,39 +21744,11 @@
 	                    id: 'cardbox',
 	                    className: 'container is-black'
 	                },
-	                _react2.default.createElement(
-	                    'nav',
-	                    { className: 'nav is-flex-desktop-only' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'nav-left' },
-	                        _react2.default.createElement(
-	                            'a',
-	                            { className: 'nav-item title is-3' },
-	                            'yamtgdb'
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'nav-center' },
-	                        _react2.default.createElement(
-	                            'a',
-	                            { className: 'nav-item is-tab is-hidden-desktop is-active' },
-	                            'search'
-	                        ),
-	                        _react2.default.createElement(
-	                            'a',
-	                            { className: 'nav-item is-tab is-hidden-desktop' },
-	                            this.state.cards.name + ' (' + 60 + ')',
-	                            ' '
-	                        ),
-	                        _react2.default.createElement(
-	                            'a',
-	                            { className: 'nav-item is-tab is-hidden-desktop' },
-	                            'list'
-	                        )
-	                    )
-	                ),
+	                _react2.default.createElement(_nav2.default, {
+	                    deck: this.getActiveDeck(),
+	                    active: this.state.nav,
+	                    onSection: this.handleSection
+	                }),
 	                _react2.default.createElement(
 	                    'section',
 	                    { className: 'section' },
@@ -21758,7 +21757,8 @@
 	                        { className: 'container' },
 	                        _react2.default.createElement(_cardSearch2.default, {
 	                            onChange: this.handleOnSearchChange.bind(this),
-	                            onSubmit: this.handleOnSearchSubmit
+	                            onSubmit: this.handleOnSearchSubmit,
+	                            isHiddenMobile: shouldBeSeenMobile('search')
 	                        }),
 	                        _react2.default.createElement(
 	                            'div',
@@ -21766,7 +21766,8 @@
 	                            _react2.default.createElement(_searchList2.default, {
 	                                id: 'search-list',
 	                                data: search,
-	                                onCardClick: this.handleOnSearchResultClick.bind(this)
+	                                onCardClick: this.handleOnSearchResultClick.bind(this),
+	                                isHiddenMobile: shouldBeSeenMobile('search')
 	                            }),
 	                            _react2.default.createElement(_cardList2.default, {
 	                                id: 'card-list',
@@ -21775,13 +21776,15 @@
 	                                onCardDoubleClick: this.handleOnDeckDoubleCardClick.bind(this),
 	                                onCardContextMenu: this.handleContextMenuClick.bind(this),
 	                                onChangeTitle: this.handleDeckChangeTitle.bind(this),
-	                                grouped: true
+	                                grouped: true,
+	                                isHiddenMobile: shouldBeSeenMobile('deck')
 	                            }),
 	                            _react2.default.createElement(_deckList2.default, {
 	                                data: decks,
 	                                active: this.state.active,
 	                                onNew: this.handleNewDeck.bind(this),
-	                                onDeckChange: this.handleDeckChange.bind(this)
+	                                onDeckChange: this.handleDeckChange.bind(this),
+	                                isHiddenMobile: shouldBeSeenMobile('list')
 	                            })
 	                        )
 	                    )
@@ -21811,13 +21814,120 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Nav = function (_Component) {
+	    _inherits(Nav, _Component);
+
+	    function Nav(props) {
+	        _classCallCheck(this, Nav);
+
+	        var _this = _possibleConstructorReturn(this, (Nav.__proto__ || Object.getPrototypeOf(Nav)).call(this, props));
+
+	        _this.handleNavigate = _this.handleNavigate.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Nav, [{
+	        key: 'handleNavigate',
+	        value: function handleNavigate(e) {
+	            var nav = e.target.id;
+
+	            this.props.onSection(nav);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var deck = this.props.deck;
+
+
+	            var active = function active(nav) {
+	                return nav == _this2.props.active ? 'is-active' : '';
+	            };
+
+	            return _react2.default.createElement(
+	                'nav',
+	                { className: 'nav is-flex-desktop-only' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'nav-left' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'nav-item title is-3' },
+	                        'yamtgdb'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'nav-center' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        {
+	                            id: 'search',
+	                            className: "nav-item is-tab is-hidden-desktop " + active('search'),
+	                            onClick: this.handleNavigate
+	                        },
+	                        'search'
+	                    ),
+	                    _react2.default.createElement(
+	                        'a',
+	                        {
+	                            id: 'deck',
+	                            className: "nav-item is-tab is-hidden-desktop " + active('deck'),
+	                            onClick: this.handleNavigate
+	                        },
+	                        deck.name + ' (' + deck.count + ')'
+	                    ),
+	                    _react2.default.createElement(
+	                        'a',
+	                        {
+	                            id: 'list',
+	                            className: "nav-item is-tab is-hidden-desktop " + active('list'),
+	                            onClick: this.handleNavigate
+	                        },
+	                        'decks'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Nav;
+	}(_react.Component);
+
+	exports.default = Nav;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
 	var _reactDom = __webpack_require__(35);
 
-	var _card = __webpack_require__(175);
+	var _card = __webpack_require__(176);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(179);
+	var _lodash = __webpack_require__(180);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -21999,7 +22109,7 @@
 	            var _props = this.props;
 	            var data = _props.data;
 	            var grouped = _props.grouped;
-	            var className = _props.className;
+	            var isHiddenMobile = _props.isHiddenMobile;
 	            var editing = this.state.editing;
 	            var typeFilter = this.typeFilter;
 	            var renderInput = this.renderInput;
@@ -22019,6 +22129,7 @@
 	            //Editions
 	            //Price / Ligamagic Price??
 	            //Print
+	            //Always grouped?
 
 	            var lands = this.renderGroup('lands', data.main.list.filter(function (card) {
 	                return typeFilter('land', card);
@@ -22034,11 +22145,15 @@
 
 	            var side = this.renderGroup('sideboard', data.side.list, data.side.counter);
 
+	            var shouldBeSeenOnMobile = function shouldBeSeenOnMobile() {
+	                return isHiddenMobile ? 'is-hidden-mobile' : '';
+	            };
+
 	            var main = [lands, creatures, other];
 	            // duas table
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'is-one-third-desktop column' },
+	                { className: 'is-one-third-desktop column ' + shouldBeSeenOnMobile() },
 	                main,
 	                side
 	            );
@@ -22051,7 +22166,7 @@
 	exports.default = CardList;
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22066,11 +22181,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _manaCost = __webpack_require__(176);
+	var _manaCost = __webpack_require__(177);
 
 	var _manaCost2 = _interopRequireDefault(_manaCost);
 
-	var _tooltip = __webpack_require__(177);
+	var _tooltip = __webpack_require__(178);
 
 	var _tooltip2 = _interopRequireDefault(_tooltip);
 
@@ -22161,19 +22276,21 @@
 	            //TODO:
 	            //show text
 	            //svgeezus all the symbols in parsing
+	            // tooltip, refactor
 	            return _react2.default.createElement(
-	                _tooltip2.default,
+	                'div',
 	                {
-	                    element: this.renderImage(data),
-	                    place: 'top'
+	                    className: 'is-mobile is-gapless box',
+	                    onClick: this.handleClick.bind(this),
+	                    onDoubleClick: this.handleDoubleClick.bind(this),
+	                    onContextMenu: this.handleContextMenu.bind(this)
 	                },
 	                _react2.default.createElement(
-	                    'div',
+	                    _tooltip2.default,
 	                    {
-	                        className: 'columns is-mobile is-gapless box',
-	                        onClick: this.handleClick.bind(this),
-	                        onDoubleClick: this.handleDoubleClick.bind(this),
-	                        onContextMenu: this.handleContextMenu.bind(this)
+	                        element: this.renderImage(data),
+	                        place: 'top',
+	                        className: 'columns is-mobile'
 	                    },
 	                    _react2.default.createElement(
 	                        'div',
@@ -22240,7 +22357,7 @@
 	exports.default = Card;
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22308,7 +22425,7 @@
 	exports.default = ManaCost;
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22325,7 +22442,7 @@
 
 	var _reactDom = __webpack_require__(35);
 
-	var _renderIntoBody = __webpack_require__(178);
+	var _renderIntoBody = __webpack_require__(179);
 
 	var _renderIntoBody2 = _interopRequireDefault(_renderIntoBody);
 
@@ -22384,14 +22501,17 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var children = this.props.children;
+	            var _props = this.props;
+	            var children = _props.children;
+	            var className = _props.className;
 
 
 	            return _react2.default.createElement(
 	                'div',
 	                {
 	                    onMouseEnter: this.handleMouseEnter,
-	                    onMouseLeave: this.handleMouseLeave
+	                    onMouseLeave: this.handleMouseLeave,
+	                    className: className
 	                },
 	                children,
 	                this.state.isVisible ? _react2.default.createElement(
@@ -22404,10 +22524,10 @@
 	    }, {
 	        key: 'renderTooltip',
 	        value: function renderTooltip() {
-	            var _props = this.props;
-	            var element = _props.element;
-	            var place = _props.place;
-	            var children = _props.children;
+	            var _props2 = this.props;
+	            var element = _props2.element;
+	            var place = _props2.place;
+	            var children = _props2.children;
 
 
 	            if (!children) {
@@ -22444,7 +22564,7 @@
 	exports.default = Tooltip;
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22518,7 +22638,7 @@
 	exports.default = RenderIntoBody;
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -39417,10 +39537,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(180)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(181)(module)))
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -39436,7 +39556,7 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39451,11 +39571,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _card = __webpack_require__(175);
+	var _card = __webpack_require__(176);
 
 	var _card2 = _interopRequireDefault(_card);
 
-	var _lodash = __webpack_require__(179);
+	var _lodash = __webpack_require__(180);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -39520,9 +39640,14 @@
 	            var name = _props.name;
 	            var grouped = _props.grouped;
 	            var className = _props.className;
+	            var isHiddenMobile = _props.isHiddenMobile;
 	            var typeFilter = this.typeFilter;
 	            var renderTitle = this.renderTitle;
 
+
+	            var shouldBeSeenOnMobile = function shouldBeSeenOnMobile() {
+	                return isHiddenMobile ? 'is-hidden-mobile' : '';
+	            };
 
 	            var total = _lodash2.default.values(data.counter).reduce(function (soma, atual) {
 	                return soma + atual;
@@ -39532,7 +39657,7 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'is-one-third-desktop column' },
+	                { className: 'is-one-third-desktop column ' + shouldBeSeenOnMobile() },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'is-hidden-mobile' },
@@ -39548,11 +39673,7 @@
 	                    total,
 	                    ' found'
 	                ) : 'nothing',
-	                _react2.default.createElement(
-	                    'div',
-	                    { 'class': 'columns' },
-	                    cards
-	                )
+	                cards
 	            );
 	        }
 	    }]);
@@ -39563,7 +39684,7 @@
 	exports.default = SearchList;
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39578,7 +39699,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _deck = __webpack_require__(183);
+	var _deck = __webpack_require__(184);
 
 	var _deck2 = _interopRequireDefault(_deck);
 
@@ -39615,7 +39736,12 @@
 	            var _props = this.props;
 	            var data = _props.data;
 	            var active = _props.active;
+	            var isHiddenMobile = _props.isHiddenMobile;
 
+
+	            var shouldBeSeenOnMobile = function shouldBeSeenOnMobile() {
+	                return isHiddenMobile ? 'is-hidden-mobile' : '';
+	            };
 
 	            var decks = data.map(function (item, index) {
 	                return _react2.default.createElement(_deck2.default, {
@@ -39628,7 +39754,7 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'is-one-third-desktop column' },
+	                { className: 'is-one-third-desktop column ' + shouldBeSeenOnMobile() },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'is-hidden-mobile' },
@@ -39664,7 +39790,7 @@
 	exports.default = DeckList;
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39679,7 +39805,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(184);
+	var _classnames = __webpack_require__(185);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -39740,7 +39866,7 @@
 	exports.default = Card;
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -39794,7 +39920,7 @@
 
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39809,7 +39935,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(184);
+	var _classnames = __webpack_require__(185);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -39879,13 +40005,18 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var props = this.props;
+	            var isHiddenMobile = this.props.isHiddenMobile;
+
+
+	            var shouldBeSeenOnMobile = function shouldBeSeenOnMobile() {
+	                return isHiddenMobile ? 'is-hidden-mobile' : '';
+	            };
 
 	            return _react2.default.createElement(
 	                'form',
 	                {
 	                    onSubmit: this.handleSubmit.bind(this),
-	                    className: 'container is-flex-desktop-only'
+	                    className: 'container is-flex-desktop-only ' + shouldBeSeenOnMobile()
 	                },
 	                _react2.default.createElement(
 	                    'p',
