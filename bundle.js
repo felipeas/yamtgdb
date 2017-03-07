@@ -21476,6 +21476,10 @@
 
 	var _cardSearch2 = _interopRequireDefault(_cardSearch);
 
+	var _lodash = __webpack_require__(180);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -21712,9 +21716,22 @@
 	    }, {
 	        key: 'getActiveDeck',
 	        value: function getActiveDeck() {
+	            var _state$cards = this.state.cards;
+	            var name = _state$cards.name;
+	            var main = _state$cards.main;
+	            var side = _state$cards.side;
+
+
+	            var totalMain = _lodash2.default.values(main.counter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
+	            var totalSide = _lodash2.default.values(side.counter).reduce(function (soma, atual) {
+	                return soma + atual;
+	            }, 0);
+
 	            return {
-	                name: 'lolol',
-	                count: 60
+	                name: name,
+	                count: totalMain + '/' + totalSide
 	            };
 	        }
 	    }, {
@@ -22154,6 +22171,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'is-one-third-desktop column ' + shouldBeSeenOnMobile() },
+	                editing ? renderInput(this, data.name) : renderTitle(this, data.name),
 	                main,
 	                side
 	            );
