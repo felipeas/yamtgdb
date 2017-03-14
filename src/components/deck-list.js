@@ -13,7 +13,11 @@ export default class DeckList extends Component {
     }
 
     render () {
-        const { data, active } = this.props;
+        const { data, active, isHiddenMobile } = this.props;
+
+        const shouldBeSeenOnMobile = () => {
+            return isHiddenMobile ? 'is-hidden-mobile' : ''
+        }
 
         const decks = data.map((item, index) => {  
             return (
@@ -21,15 +25,22 @@ export default class DeckList extends Component {
                     key={index}
                     data={item}
                     onClick={this.props.onDeckChange}
-                    className={item.id == active? 'deck-active': ''}
+                    active={active == item.id}
                 />
             )
         })
 
         return (
-            <div className='deck-list'>
-                <h2>decks</h2>
-                {decks}
+            <div className={'is-one-third-desktop column ' + shouldBeSeenOnMobile()}>
+                <div className='is-hidden-mobile'>
+                    <h2 className="title is-4">decks</h2>
+                </div>
+                <div className="menu">
+                    <ul className="menu-list">
+                        {decks}
+                    </ul>
+                </div>
+                
                 <a
                     onClick={this.handleNew}    
                 >

@@ -15,18 +15,17 @@ export default class Card extends Component {
     }
 
     render () {
-        const { data, className } = this.props
+        const { data, active } = this.props
         
         return (
-            <div className={classnames('deck-wrapper', className)}>
-                <div className="deck-title">
-                    <span
-                        onClick={this.handleClick}
-                    >
-                        {data.name}
-                    </span>
-                </div>
-            </div>
+            <li>
+                <a
+                    className={active ? 'label is-active is-black': 'label is-black'}
+                    onClick={this.handleClick}
+                >
+                    {data.name}
+                </a>
+            </li>
         )
     }
 }

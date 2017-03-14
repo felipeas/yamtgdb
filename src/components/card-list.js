@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { findDOMNode } from 'react-dom';
-import classnames from 'classnames'
+import { findDOMNode } from 'react-dom'
 import Card from './card'
 import _ from 'lodash'
 
@@ -94,8 +93,6 @@ export default class CardList extends Component {
                     onClick={this.handleClick}
                     onDoubleClick={this.handleDoubleClick}
                     onContextMenu={this.props.onCardContextMenu}
-                    showImage={showImages}
-                    showText={showText}
                     showCount={showCount}
                     count={counter[item.id]}
                 />
@@ -104,9 +101,10 @@ export default class CardList extends Component {
 
         if (title) {
             return (
-                <div className='list-header'>
-                    {total > 0 ? (<span className='list-header-subtotal'>{total}</span>) : null}
-                    <span className='list-header-type'>{title}</span>
+                <div className='container'>
+                    <span className='title is-5'>
+                        {total > 0 ? (`(${total}) ${title}`) : `no ${title}`}
+                    </span>
                     {cards}
                 </div>
             )
@@ -116,10 +114,10 @@ export default class CardList extends Component {
     }
 
     renderTitle(self, name) {
-        const title = name ? name : '<missingNO>'
-
+        const title = name ? name : '<no name>'
         return (
             <h2
+                className='title is-4'
                 key={name}
                 onClick={self.toggleEdit}
             >
@@ -130,10 +128,9 @@ export default class CardList extends Component {
 
     renderInput(self, name) {
          return (
-            <div className='deck-name'>
+            <div className='block'>
                 <input
                     ref='name' 
-                    className='deck-name-input'
                     type="text"
                     placeholder={name}
                     onKeyPress={self.handleChangeTitle}
@@ -144,7 +141,7 @@ export default class CardList extends Component {
     }
 
     render () {
-        const { data, grouped, className } = this.props
+        const { data, grouped, isHiddenMobile } = this.props
         const { editing } = this.state
         const { typeFilter, renderInput, renderTitle } = this
 
@@ -157,6 +154,7 @@ export default class CardList extends Component {
         //Editions
         //Price / Ligamagic Price??
         //Print
+        //Always grouped?
             
         const lands = this.renderGroup(
             'lands',
@@ -182,14 +180,15 @@ export default class CardList extends Component {
             data.side.counter
         )
 
+        const shouldBeSeenOnMobile = () => {
+            return isHiddenMobile ? 'is-hidden-mobile' : ''
+        }
+
         const main = [ lands, creatures, other ]
-    
+        // duas table
         return (
-            <div className={classnames('list', className)}>
+            <div className={'is-one-third-desktop column ' + shouldBeSeenOnMobile()}>
                 { editing ? renderInput(this, data.name) : renderTitle(this, data.name)}
-                <div className='list-header'>
-                    {totalMain > 0 ? (<span className='list-header-total'>{totalMain}</span>) : null}
-                </div>
                 {main}
                 {side}
             </div>

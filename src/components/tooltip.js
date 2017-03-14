@@ -40,12 +40,14 @@ class Tooltip extends Component {
     }
 
     render() {
-        const { children } = this.props
+        const { children, className } = this.props
+
 
         return (
             <div
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
+                className={className}
             >
                 {children}
                 {this.state.isVisible ? (

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classnames from 'classnames'
 
 export default class CardSearch extends Component {
     constructor (props) {
@@ -46,22 +47,32 @@ export default class CardSearch extends Component {
     }
 
     render () {
-        const { props } = this;
+        const { isHiddenMobile } = this.props;
+
+        const shouldBeSeenOnMobile = () => {
+            return isHiddenMobile ? 'is-hidden-mobile' : ''
+        }
+
         return (
-            <form onSubmit={this.handleSubmit.bind(this)}>
-                <input
-                    autoFocus
-                    id="search"
-                    ref="search"
-                    type="text"
-                    placeholder="search"
-                    onChange={this.handleChange.bind(this)}
-                />
-                <label
-                    style={this.state.isFetching ? {display:'block'} : {display: 'none' }}    
-                >
-                    fetching
-                </label>
+            <form 
+                onSubmit={this.handleSubmit.bind(this)}
+                className={'container is-flex-desktop-only ' + shouldBeSeenOnMobile()}
+            >
+                <p className="control has-addons search-button is-one-third-desktop">
+                    <input 
+                        id="search"
+                        autoFocus
+                        className="input is-expanded" 
+                        type="text" 
+                        placeholder="search here"
+                    />   
+                    <a 
+                        className={classnames('button',  this.state.isFetching ? 'is-loading is-dark is-disabled' : 'is-dark')}
+                        onClick={this.handleSubmit.bind(this)}
+                    >
+                        search
+                    </a>
+                </p>
             </form>
         )
     }

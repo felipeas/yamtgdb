@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import classnames from 'classnames'
 import Card from './card'
 import _ from 'lodash'
 
@@ -31,12 +30,16 @@ export default class SearchList extends Component {
     }
 
     renderTitle(name) {
-        return (<h2>{name}</h2>)
+        return (<h2 className="title is-4">{name}</h2>)
     }
 
     render () {
-        const { data, name, grouped, className } = this.props
+        const { data, name, grouped, className, isHiddenMobile } = this.props
         const { typeFilter, renderTitle } = this
+
+        const shouldBeSeenOnMobile = () => {
+            return isHiddenMobile ? 'is-hidden-mobile' : ''
+        }
 
         const total = _.values(data.counter).reduce((soma, atual) => {
             return soma + atual
@@ -45,14 +48,11 @@ export default class SearchList extends Component {
         const cards = this.renderAll(data.list, data.counter)
         
         return (
-            <div className={classnames('list', className)}>
-                {renderTitle(name)}
-                
-                <div className='list-header'>
-                    {total > 0 ? 
-                        (<span className='list-header-total'>{total} found</span>) 
-                    : (<span>nothing</span>)}
+            <div className={'is-one-third-desktop column ' + shouldBeSeenOnMobile()}>
+                <div className='is-hidden-mobile'>
+                    <h2 className="title is-4">search</h2>
                 </div>
+                {total > 0 ? (<span className='title is-5'>{total} found</span>) : 'nothing'}
                 {cards}
             </div>
         )

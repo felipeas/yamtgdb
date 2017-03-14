@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import Nav from './nav'
 import CardList from './card-list'
 import SearchList from './search-list'
 import DeckList from './deck-list'
 import CardSearch from './card-search'
+import _ from 'lodash'
 
 export default class CardBox extends Component {
     constructor (props) {
@@ -13,12 +15,22 @@ export default class CardBox extends Component {
         this.state.search = JSON.parse(localStorage.getItem('yamtgdb-search')) || this.state.search
         this.state.active = JSON.parse(localStorage.getItem('yamtgdb-active'))  || this.state.active
         this.state.decks = JSON.parse(localStorage.getItem('yamtgdb-decks'))  || this.state.decks
+        this.state.nav = JSON.parse(localStorage.getItem('yamtgdb-nav'))  || this.state.nav
 
         if (this.state.active > 0) {
             this.state.cards = this.state.decks.find(deck => deck.id == this.state.active);
         }
 
         this.handleOnSearchSubmit = this.handleOnSearchSubmit.bind(this)
+        this.handleSection = this.handleSection.bind(this)
+        this.handleOnSearchChange = this.handleOnSearchChange.bind(this)
+        this.handleOnSearchResultClick = this.handleOnSearchResultClick.bind(this)
+        this.handleOnDeckDoubleCardClick = this.handleOnDeckDoubleCardClick.bind(this)
+        this.handleOnDeckCardClick = this.handleOnDeckCardClick.bind(this)
+        this.handleContextMenuClick = this.handleContextMenuClick.bind(this)
+        this.handleDeckChangeTitle = this.handleDeckChangeTitle.bind(this)
+        this.handleNewDeck = this.handleNewDeck.bind(this)
+        this.handleDeckChange = this.handleDeckChange.bind(this)
     }
 
     getInitialState() {
@@ -30,7 +42,7 @@ export default class CardBox extends Component {
             },
             cards: {
                 id: 0,
-                name: '<missingNO>',
+                name: '<no name>',
                 main: {
                     list : [],
                     counter : {}
@@ -40,7 +52,8 @@ export default class CardBox extends Component {
                     counter : {}
                 }
             },
-            decks: []
+            decks: [],
+            nav: 'search'
         } 
 
         return initialState;
@@ -50,6 +63,7 @@ export default class CardBox extends Component {
         localStorage.setItem('yamtgdb-search', JSON.stringify(this.state.search))
         localStorage.setItem('yamtgdb-active', JSON.stringify(this.state.active))
         localStorage.setItem('yamtgdb-decks', JSON.stringify(this.state.decks))
+        localStorage.setItem('yamtgdb-nav', JSON.stringify(this.state.nav))
     }
 
     handleOnSearchChange (search) {
@@ -188,50 +202,78 @@ export default class CardBox extends Component {
         this.setState({ active: deck.id, cards: deck, decks })
     }
 
+    handleSection (section) {
+        this.setState({ nav: section})
+    }
+
+    getActiveDeck () {
+        const{ name, main, side} = this.state.cards
+
+        const totalMain = _.values(main.counter).reduce((soma, atual) => soma + atual, 0)
+        const totalSide = _.values(side.counter).reduce((soma, atual) => soma + atual, 0)
+
+        return {
+            name: name,
+            count: totalMain +  '/' + totalSide
+        }
+    }
+
     render () {
         // TODO: 
         // load decks
         // save deck
         // collection
-        // move bindingins to constructor
+        // define prop types (all over app)
+        const { search, cards, decks, nav } = this.state
 
-        const { search, cards, decks } = this.state
+        const shouldBeSeenMobile = section => {
+            return nav == section ? false : true
+        }
 
         return (
-            <div id='cardbox'>
-                <div className='title'>
-                    <h1>yamtgdb</h1>
-                    <span className='sub-title'>yet another magic the gathering deck builder</span>
-                </div>
-                <CardSearch 
-                    onChange={this.handleOnSearchChange.bind(this)}
-                    onSubmit={this.handleOnSearchSubmit}
+            <div 
+                id='cardbox'
+                className='container is-black'
+            >
+                <Nav
+                    deck={this.getActiveDeck()}
+                    active={this.state.nav}
+                    onSection={this.handleSection}
                 />
-                <section className='lists'>
-                    <SearchList 
-                        id='search-list'
-                        name='search'
-                        className='search'
-                        data={search} 
-                        onCardClick={this.handleOnSearchResultClick.bind(this)}
-                    />
-                    <CardList 
-                        id='card-list'
-                        name='deck'
-                        className='deck'
-                        data={cards}
-                        onCardClick={this.handleOnDeckCardClick.bind(this)}
-                        onCardDoubleClick={this.handleOnDeckDoubleCardClick.bind(this)}
-                        onCardContextMenu={this.handleContextMenuClick.bind(this)}
-                        onChangeTitle={this.handleDeckChangeTitle.bind(this)}
-                        grouped
-                    />
-                    <DeckList
-                        data={decks}
-                        active={this.state.active}
-                        onNew={this.handleNewDeck.bind(this)}
-                        onDeckChange={this.handleDeckChange.bind(this)}
-                    />
+                
+                <section className='section'>
+                    <div className='container'>
+                        <CardSearch 
+                            onChange={this.handleOnSearchChange}
+                            onSubmit={this.handleOnSearchSubmit}
+                            isHiddenMobile={shouldBeSeenMobile('search')}
+                        />
+                        <div className='columns'>
+                            <SearchList 
+                                id='search-list'
+                                data={search} 
+                                onCardClick={this.handleOnSearchResultClick}
+                                isHiddenMobile={shouldBeSeenMobile('search')}
+                            />
+                            <CardList 
+                                id='card-list'
+                                data={cards}
+                                onCardClick={this.handleOnDeckCardClick}
+                                onCardDoubleClick={this.handleOnDeckDoubleCardClick}
+                                onCardContextMenu={this.handleContextMenuClick}
+                                onChangeTitle={this.handleDeckChangeTitle}
+                                grouped
+                                isHiddenMobile={shouldBeSeenMobile('deck')}
+                            />
+                            <DeckList
+                                data={decks}
+                                active={this.state.active}
+                                onNew={this.handleNewDeck}
+                                onDeckChange={this.handleDeckChange}
+                                isHiddenMobile={shouldBeSeenMobile('list')}
+                            />
+                        </div>
+                    </div>
                 </section>
             </div>
         )

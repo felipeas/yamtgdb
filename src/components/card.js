@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import ManaCost from './mana-cost'
 import Tooltip from './tooltip'
-import { liga } from '../modules/price'
-
 
 export default class Card extends Component {
     constructor (props) {
@@ -18,11 +16,7 @@ export default class Card extends Component {
         const card = this.props.data
         let url = `http://localhost:3000/price?card=${card.name}`
         url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
-        
-        //if (process.env.NODE_ENV == 'production') {
-        //    url = `https://liga-price-crawler-nxwxrqpgds.now.sh/price?card=${card.name}`
-        //}
-    
+
         this.setState({
                 isFetching: true
             },
@@ -65,35 +59,38 @@ export default class Card extends Component {
     }   
 
     render () {
-        const { price } = this.state;
+        const { price } = this.state
         const { data, count } = this.props
-        const { showImage, showText, showCount } = this.props
-        
-        const showPrice = true;
+        const { showCount } = this.props
+        const showPrice = true
         //TODO:
         //show text
         //svgeezus all the symbols in parsing
+        // tooltip, refactor
         return (
-            <Tooltip
-                element={this.renderImage(data)}
-                place='top'
+
+            <div 
+                className='is-mobile is-gapless box'
+                onClick={this.handleClick.bind(this)}
+                onDoubleClick={this.handleDoubleClick.bind(this)}
+                onContextMenu={this.handleContextMenu.bind(this)}
             >
-                <div 
-                    className="card-wrapper" 
-                    onClick={this.handleClick.bind(this)}
-                    onDoubleClick={this.handleDoubleClick.bind(this)}
-                    onContextMenu={this.handleContextMenu.bind(this)}
+                <Tooltip
+                    element={this.renderImage(data)}
+                    place='top'
+                    className='columns is-mobile'
                 >
-                    <div className="card-title">
-                        <span>{data.name}</span>
+                    <div className='column is-1'>
+                        {showCount ? count : '' }
                     </div>
-        
-                    {showCount ? this.renderCount(count) : '' }
-                    {showText ? this.renderText(data) : '' }
-                    {showImage ? this.renderImage(data) : '' }
-                    {showPrice ? this.renderPrice(price) : '' }
-                </div>
-            </Tooltip>
+                    <div className='column is-three-quarters'>
+                        {data.name}
+                    </div>
+                    <div className='column is-one-quarter'>
+                        {showPrice ? <p className='is warming'>{price}</p> : '' }
+                    </div>
+                </Tooltip>                
+            </div>
         )
     }
 
@@ -101,29 +98,17 @@ export default class Card extends Component {
         const imagem = data.editions[0].image_url;
         //Get random art, for fun purpouses
         //const imagem = data.editions[Math.floor(Math.random() * data.editions.length)].image_url;
+        debugger
         return (
-            <div className="card-image">
+            <div>
                 <img src={imagem}/>
             </div>    
         )
     }
 
-    renderText(data) {
+    renderName(name) {
         return (
-            <div className="card-text">
-                <span>{data.text? data.text : '[none]' }</span>
-                <ManaCost 
-                    data={data.cost}
-                />
-            </div>    
-        )
-    }
-
-    renderCount(data) {
-        return (
-            <div className="card-count">
-                <span>{data}</span>
-            </div>   
+            <span>{name}</span> 
         )
     }
     
@@ -132,7 +117,7 @@ export default class Card extends Component {
 
         return (
             <div className="card-price">
-                <span>{isFetching ? '...' : price }</span>
+                {isFetching ? '...' : price }            
             </div>   
         )
     }
